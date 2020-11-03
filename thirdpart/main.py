@@ -4,74 +4,22 @@ import Filter
 import Portfolio as pf
 from pylab import *
 import Cap_Update_daily as cap_update
-import tushare as ts
-
-def get_sharp_rate():
-    db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                         db='stocks', charset='utf8')
-    cursor = db.cursor()
-
-    sql_cap = "select * from my_capital a order by seq asc"
-    cursor.execute(sql_cap)
-    done_exp = cursor.fetchall()
-    db.commit()
-    cap_list = [float(x[0]) for x in done_exp]
-    return_list = []
-    base_cap = float(done_exp[0][0])
-    for i in range(len(cap_list)):
-        if i == 0:
-            return_list.append(float(1.00))
-        else:
-            ri = (float(done_exp[i][0]) - float(done_exp[0][0]))/float(done_exp[0][0])
-            return_list.append(ri)
-    std = float(np.array(return_list).std())
-    exp_portfolio = (float(done_exp[-1][0]) - float(done_exp[0][0]))/float(done_exp[0][0])
-    exp_norisk = 0.04*(5.0/12.0)
-    sharp_rate = (exp_portfolio - exp_norisk)/(std)
-
-    return sharp_rate,std
+import DBUtils
+import TSUtils
+import Utils
 
 if __name__ == '__main__':
 
+    DBUtils.clear_db()
+    DBUtils.init_stock_pool()
 
-    # 建立数据库连接,设置tushare的token,定义一些初始化参数
-    db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                         db='stocks', charset='utf8')
-    cursor = db.cursor()
-    ts.set_token('5e7376feb8fd52cc3a964a5e8386799360e399b36136e52885ed3323')
-    pro = ts.pro_api()
-    year = 2018
-    date_seq_start = str(year) + '-03-01'
-    date_seq_end = str(year) + '-04-01'
-    stock_pool = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
-
-    # 先清空之前的测试记录,并创建中间表
-    sql_wash1 = 'delete from my_capital where seq != 1'
-    cursor.execute(sql_wash1)
-    db.commit()
-    sql_wash3 = 'truncate table my_stock_pool'
-    cursor.execute(sql_wash3)
-    db.commit()
-    # 清空行情源表，并插入相关股票的行情数据。该操作是为了提高回测计算速度而剔除行情表(stock_all)中的冗余数据。
-    sql_wash4 = 'truncate table stock_info'
-    cursor.execute(sql_wash4)
-    db.commit()
-    in_str = '('
-    for x in range(len(stock_pool)):
-        if x != len(stock_pool)-1:
-            in_str += str('\'') + str(stock_pool[x])+str('\',')
-        else:
-            in_str += str('\'') + str(stock_pool[x]) + str('\')')
-    sql_insert = "insert into stock_info(select * from stock_all a where a.stock_code in %s)"%(in_str)
-    cursor.execute(sql_insert)
-    db.commit()
-
-
+    date_seq_start = Utils.date_start
+    date_seq_end = Utils.date_end
+ 
     # 建回测时间序列
     back_test_date_start = (datetime.datetime.strptime(date_seq_start, '%Y-%m-%d')).strftime('%Y%m%d')
     back_test_date_end = (datetime.datetime.strptime(date_seq_end, "%Y-%m-%d")).strftime('%Y%m%d')
-    df = pro.trade_cal(exchange_id='', is_open=1, start_date=back_test_date_start, end_date=back_test_date_end)
-    date_temp = list(df.iloc[:, 1])
+    date_temp = TSUtils.get_stock_canlender(back_test_date_start, back_test_date_end)
     date_seq = [(datetime.datetime.strptime(x, "%Y%m%d")).strftime('%Y-%m-%d') for x in date_temp]
     print(date_seq)
 
@@ -86,7 +34,7 @@ if __name__ == '__main__':
                 ans2 = ev.model_eva(stock,date_seq[i],90,365)
                 # print('Date : ' + str(date_seq[i]) + ' Update : ' + str(stock))
             except Exception as ex:
-                print(ex)
+                print('ERROR:' + ex)
                 continue
         # 每5个交易日更新一次配仓比例
         if divmod(day_index+4,5)[1] == 0:
@@ -94,7 +42,7 @@ if __name__ == '__main__':
             if len(portfolio_pool) < 5:
                 print('Less than 5 stocks for portfolio!! state_dt : ' + str(date_seq[i]))
                 continue
-            pf_src = pf.get_portfolio(portfolio_pool,date_seq[i-1],year)
+            pf_src = pf.get_portfolio(portfolio_pool, date_seq[i-1], Utils.year)
             # 取最佳收益方向的资产组合
             risk = pf_src[1][0]
             weight = pf_src[1][1]
@@ -109,7 +57,7 @@ if __name__ == '__main__':
     print('Sharp Rate : ' + str(sharp))
     print('Risk Factor : ' + str(c_std))
 
-    sql_show_btc = "select * from stock_index a where a.stock_code = 'SH' and a.state_dt >= '%s' and a.state_dt <= '%s' order by state_dt asc"%(date_seq_start,date_seq_end)
+    sql_show_btc = "select * from stock_index a where a.code = 'SH' and a.date>= '%s' and a.date <= '%s' order by date asc"%(date_seq_start,date_seq_end)
     cursor.execute(sql_show_btc)
     done_set_show_btc = cursor.fetchall()
     #btc_x = [x[0] for x in done_set_show_btc]
@@ -146,7 +94,4 @@ if __name__ == '__main__':
 
     cursor.close()
     db.close()
-
-
-
 

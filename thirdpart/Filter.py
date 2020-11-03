@@ -1,11 +1,11 @@
 import pymysql.cursors
 import Deal
 import Operator
+import DBUtils
 
 def filter_main(stock_new,state_dt,predict_dt,poz):
     # 建立数据库连接
-    db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                         db='stocks', charset='utf8')
+    db = DBUtils.get_conn()
     cursor = db.cursor()
 
     #先更新持股天数

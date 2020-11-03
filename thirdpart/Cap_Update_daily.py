@@ -1,9 +1,8 @@
-import pymysql
+import DBUtils
 
 def cap_update_daily(state_dt):
     para_norisk = (1.0 + 0.04/365)
-    db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                         db='stocks', charset='utf8')
+    db = DBUtils.get_conn()
     cursor = db.cursor()
     sql_pool = "select * from my_stock_pool"
     cursor.execute(sql_pool)

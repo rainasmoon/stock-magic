@@ -1,10 +1,10 @@
 import pymysql.cursors
 import Deal
+import DBUtils
 
 def buy(stock_code,opdate,buy_money):
     # 建立数据库连接
-    db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                         db='stocks', charset='utf8')
+    db = DBUtils.get_conn()
     cursor = db.cursor()
     deal_buy = Deal.Deal(opdate)
     #后买入
@@ -48,8 +48,7 @@ def buy(stock_code,opdate,buy_money):
 
 def sell(stock_code,opdate,predict):
     # 建立数据库连接
-    db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                         db='stocks', charset='utf8')
+    db = DBUtils.get_conn()
     cursor = db.cursor()
 
     deal = Deal.Deal(opdate)

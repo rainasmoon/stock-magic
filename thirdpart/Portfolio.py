@@ -3,16 +3,16 @@ import datetime
 import pymysql
 import copy
 import tushare as ts
-
+import DBUtils
+import TSUtils
+import Utils
 
 # 返回的resu中 特征值按由小到大排列，对应的是其特征向量
 def get_portfolio(stock_list,state_dt,para_window):
     # 建数据库连接，设置Tushare的token
-    db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                         db='stocks', charset='utf8')
+    db = DBUtils.get_conn()
     cursor = db.cursor()
-    ts.set_token('5e7376feb8fd52cc3a964a5e8386799360e399b36136e52885ed3323')
-    pro = ts.pro_api()
+    pro = TSUtils.get_pro()
 
     portfilio = stock_list
 
@@ -85,7 +85,7 @@ def get_portfolio(stock_list,state_dt,para_window):
     return resu
 
 if __name__ == '__main__':
-    pf = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
+    pf = Utils.stock_pool
     ans = get_portfolio(pf,'2018-01-01',90)
     print('**************  Market Trend  ****************')
     print('Risk : ' + str(round(ans[0][0], 2)))

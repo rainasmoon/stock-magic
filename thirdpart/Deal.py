@@ -1,4 +1,5 @@
 import pymysql.cursors
+import DBUtils
 
 class Deal(object):
     cur_capital = 0.00
@@ -13,8 +14,7 @@ class Deal(object):
 
     def __init__(self,state_dt):
         # 建立数据库连接
-        db = pymysql.connect(host='127.0.0.1', user='stock', passwd='stock',
-                             db='stocks', charset='utf8')
+        db = DBUtils.get_conn()
         cursor = db.cursor()
         try:
             sql_select = 'select * from my_capital a order by seq desc limit 1'
