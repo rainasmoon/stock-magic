@@ -1,4 +1,3 @@
-from sklearn import svm
 import datetime
 import DC
 import DBUtils
@@ -9,13 +8,21 @@ import ModelUtils
 import traceback
 
 def model_eva(stock,state_dt,para_window,para_dc_window):
+    
+    if DBUtils.select_ev_result(state_dt, stock) :
+        print('Already ev:' + stock + ':' + state_dt)
+        return 0
+    
     # 建评估时间序列, para_window参数代表回测窗口长度
+
     model_test_date_start = (datetime.datetime.strptime(state_dt, '%Y-%m-%d') - datetime.timedelta(days=para_window)).strftime(
         '%Y%m%d')
     model_test_date_end = state_dt
     date_temp = TSUtils.get_stock_canlender(model_test_date_start,
                                             model_test_date_end)
     model_test_date_seq = [(datetime.datetime.strptime(x, "%Y%m%d")).strftime('%Y-%m-%d') for x in date_temp]
+    print('date seq:', model_test_date_seq)
+
     # 清空评估用的中间表model_ev_mid
     DBUtils.clear_ev_mid()
 
@@ -39,7 +46,7 @@ def model_eva(stock,state_dt,para_window,para_dc_window):
         aresult = ModelUtils.use_svm(train, target, test_case)
        
         # 将预测结果插入到中间表
-        DBUtils.insert_predict(model_test_new_end, stock, aresult))
+        DBUtils.insert_predict(model_test_new_end, stock, aresult)
     if return_flag == 1:
         acc = recall = acc_neg = f1 = 0
         return -1

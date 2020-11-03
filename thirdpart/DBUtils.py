@@ -1,6 +1,7 @@
 ## encoding: utf-8 ##
 import pymysql
-
+import Utils
+from pylab import np
 
 def get_mysql_conn():
     return pymysql.connect(host='localhost', user='stock', passwd='stock',
@@ -86,6 +87,9 @@ def count_recall():
     sql_resu_recall_mon = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_real = 1"
     cursor.execute(sql_resu_recall_mon)
     recall_mon = cursor.fetchall()[0][0]
+    if recall_mon == 0:
+        print('WARN: recall_mon is 0!')
+        return 0
     recall = recall_son / recall_mon
     return recall
 
@@ -158,6 +162,16 @@ def insert_predict(adate, stock, predict):
     cursor.execute(sql_insert)
     db.commit()
 
+def select_ev_result(state_dt, stock):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql = "select * from model_ev_resu where state_dt = '%s' and stock_code = '%s'" % (state_dt, stock)
+
+    cursor.execute(sql)
+    ev_result = cursor.fetchall()
+    return ev_result
+
 def insert_ev_result(state_dt, stock, acc, recall, f1, acc_neg, amodel, predict):
     db = get_conn()
     cursor = db.cursor()
@@ -167,3 +181,22 @@ def insert_ev_result(state_dt, stock, acc, recall, f1, acc_neg, amodel, predict)
     db.commit()
     db.close()
 
+def select_index(date_seq_start, date_seq_end):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_show_btc = "select * from stock_index a where a.code = 'SH' and a.date>= '%s' and a.date <= '%s' order by date asc"%(date_seq_start,date_seq_end)
+    cursor.execute(sql_show_btc)
+    done_set_show_btc = cursor.fetchall()
+    
+    return done_set_show_btc
+
+def select_profit():
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_show_profit = "select max(a.capital),a.state_dt from my_capital a where a.state_dt is not null group by a.state_dt order by a.state_dt asc"
+    cursor.execute(sql_show_profit)
+    done_set_show_profit = cursor.fetchall()
+    
+    return done_set_show_profit
