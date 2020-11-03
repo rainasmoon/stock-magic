@@ -2,6 +2,7 @@
 
 import tushare as ts
 import Utils
+import datetime
 
 ts.set_token('5e7376feb8fd52cc3a964a5e8386799360e399b36136e52885ed3323')
 pro = ts.pro_api()
@@ -17,9 +18,14 @@ def get_ts():
 def get_stock_canlender(startdate, enddate):
     start = startdate
     end = enddate
-    if(len(startdate) != 8):
+    if type(startdate) == datetime.datetime:
+        start = Utils.format_d(startdate)
+    elif(len(startdate) != 8):
         start = Utils.date2d(startdate)
-    if(len(enddate) != 8):
+    
+    if type(enddate) == datetime.datetime:
+        end = Utils.format_d(enddate)
+    elif(len(enddate) != 8):
         end = Utils.date2d(enddate)
 
     df = get_pro().trade_cal(exchange_id='', is_open=1, start_date=start,

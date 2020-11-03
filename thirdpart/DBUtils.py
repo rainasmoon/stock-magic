@@ -56,11 +56,10 @@ def init_stock_pool():
 def select_stock(stock, start_dt, end_dt):
     db = get_conn()
     cursor = db.cursor()
-    sql_done_set = "SELECT * FROM stock_all a where stock_code = '%s' and state_dt >= '%s' and state_dt <= '%s' order by state_dt asc" % (in_code, start_dt, end_dt)
+    sql_done_set = "SELECT * FROM stock_all a where stock_code = '%s' and state_dt >= '%s' and state_dt <= '%s' order by state_dt asc" % (stock , start_dt, end_dt)
     cursor.execute(sql_done_set)
     done_set = cursor.fetchall()
     return done_set
-
 
 def get_sharp_rate():
     db = get_conn()
