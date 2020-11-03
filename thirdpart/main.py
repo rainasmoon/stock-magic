@@ -9,6 +9,30 @@ import PltUtils
 
 import datetime
 
+def update_ratio(aday, pre_day):
+    portfolio_pool = Utils.stock_pool
+    if len(portfolio_pool) < 5:
+        print('Less than 5 stocks for portfolio!! state_dt : ' + str(aday))
+    pf_src = pf.get_portfolio(portfolio_pool, pre_day, Utils.year)
+    # 取最佳收益方向的资产组合
+    risk = pf_src[1][0]
+    weight = pf_src[1][1]
+    Filter.filter_main(portfolio_pool, aday, pre_day, weight)
+
+def update_only(aday, pre_day):
+    Filter.filter_main([], aday, pre_day, [])
+    cap_update_ans = cap_update.cap_update_daily(aday)
+
+
+def daily_trade(trade_date):
+    for stock in Utils.stock_pool:
+        try:
+            ans2 = ev.model_eva(stock, trade_date, 90, 365)
+        except Exception as ex:
+            print('ERROR:', ex)
+            
+
+
 if __name__ == '__main__':
 
     DBUtils.clear_db()
@@ -18,40 +42,23 @@ if __name__ == '__main__':
     date_seq_end = Utils.date_end
  
     # 建回测时间序列
-    back_test_date_start = (datetime.datetime.strptime(date_seq_start, '%Y-%m-%d')).strftime('%Y%m%d')
-    back_test_date_end = (datetime.datetime.strptime(date_seq_end, "%Y-%m-%d")).strftime('%Y%m%d')
-    date_temp = TSUtils.get_stock_canlender(back_test_date_start, back_test_date_end)
-    date_seq = [(datetime.datetime.strptime(x, "%Y%m%d")).strftime('%Y-%m-%d') for x in date_temp]
+    date_temp = TSUtils.get_stock_canlender(date_seq_start, date_seq_end)
+    date_seq = [(Utils.d2date(x)) for x in date_temp]
     print(date_seq)
 
     #开始模拟交易
     index = 1
     day_index = 0
     for i in range(1,len(date_seq)):
+        print('To Date:' + date_seq[i])
         day_index += 1
         # 每日推进式建模，并获取对下一个交易日的预测结果
-        for stock in Utils.stock_pool:
-            try:
-                ans2 = ev.model_eva(stock,date_seq[i],90,365)
-                # print('Date : ' + str(date_seq[i]) + ' Update : ' + str(stock))
-            except Exception as ex:
-                print('ERROR:' + ex)
-                continue
-        # 每5个交易日更新一次配仓比例
+        daily_trade(date_seq[i])
         if divmod(day_index+4,5)[1] == 0:
-            portfolio_pool = Utils.stock_pool
-            if len(portfolio_pool) < 5:
-                print('Less than 5 stocks for portfolio!! state_dt : ' + str(date_seq[i]))
-                continue
-            pf_src = pf.get_portfolio(portfolio_pool, date_seq[i-1], Utils.year)
-            # 取最佳收益方向的资产组合
-            risk = pf_src[1][0]
-            weight = pf_src[1][1]
-            Filter.filter_main(portfolio_pool,date_seq[i],date_seq[i-1],weight)
+            update_ratio(date_seq[i], date_seq[i-1])
         else:
-            Filter.filter_main([],date_seq[i],date_seq[i - 1], [])
-            cap_update_ans = cap_update.cap_update_daily(date_seq[i])
-        print('Runnig to Date :  ' + str(date_seq[i]))
+            update_only(date_seq[i], date_seq[i-1])
+
     print('ALL FINISHED!!')
 
     sharp,c_std = DBUtils.get_sharp_rate()
