@@ -8,7 +8,6 @@ ts.set_token('5e7376feb8fd52cc3a964a5e8386799360e399b36136e52885ed3323')
 pro = ts.pro_api()
 
 def get_pro():
-    print('CALL TS pro ...')
     return pro
 
 def get_ts():
@@ -37,7 +36,7 @@ def get_stock_canlender(startdate, enddate):
     return list(df.iloc[:,1])
 
 def get_daily(stock_code, start_dt, end_dt):
-
+    print('CALL TS pro...:' + stock_code)
     df = get_pro().daily(ts_code=stock_code, start_date=start_dt, end_date=end_dt)
     return df
 

@@ -39,5 +39,5 @@ def get_index():
 
 if __name__ == '__main__':
     df = get_index()
-    print(df.head())
+    print(df.tail())
     print('end.')

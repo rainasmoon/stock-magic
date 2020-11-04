@@ -72,6 +72,6 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
 if __name__ == '__main__':
     stock_pool = ['300077.SZ']
     for stock in stock_pool :
-        ans = model_eva(stock,'2020-11-03',90,365)
+        ans = model_eva(stock,'2020-11-05',90,365)
     print('All Finished !!')
 
