@@ -53,6 +53,16 @@ def init_stock_pool():
     cursor.execute(sql_insert)
     db.commit()
 
+def select_stock_info(opdate, stock_code):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_buy = "select * from stock_info a where a.state_dt = '%s' and a.stock_code = '%s'" % (opdate, stock_code)
+    cursor.execute(sql_buy)
+    done_set_buy = cursor.fetchall()
+
+    return done_set_buy
+
 def select_stock(stock, start_dt, end_dt):
     db = get_conn()
     cursor = db.cursor()
@@ -208,3 +218,39 @@ def select_profit():
     done_set_show_profit = cursor.fetchall()
     
     return done_set_show_profit
+
+def insert_my_capital(new_capital, new_money_lock,new_money_rest, act,
+                      stock_code, vol, new_profit, new_profit_rate, bz,  opdate, price):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_sell_insert = "insert into my_capital(capital,money_lock,money_rest,deal_action,stock_code,stock_vol,profit,profit_rate,bz,state_dt,deal_price)values('%.2f','%.2f','%.2f','%s','%s','%.2f','%.2f','%.2f','%s','%s','%.2f')" %(new_capital,new_money_lock,new_money_rest,act,stock_code,vol,new_profit,new_profit_rate,bz,opdate, price)
+    cursor.execute(sql_sell_insert)
+    db.commit()
+
+def insert_my_stock_poll(stock_code, buy_price, vol):
+    db = get_conn()
+    cursor = db.cursor()
+    sql_buy_update3 = "insert into my_stock_pool(stock_code,buy_price,hold_vol,hold_days) VALUES ('%s','%.2f','%i','%i')" % (stock_code, buy_price, vol, int(1))
+    cursor.execute(sql_buy_update3)
+    db.commit()
+
+
+def update_my_stock_poll(stock_code, new_buy_price, new_vol):
+    db = get_conn()
+    cursor = db.cursor()
+    sql_buy_update3 = "update my_stock_pool w set w.buy_price = (select '%.2f' from dual) where w.stock_code = '%s'" % (new_buy_price, stock_code)
+    sql_buy_update3b = "update my_stock_pool w set w.hold_vol = (select '%i' from dual) where w.stock_code = '%s'" % (new_vol, stock_code)
+    sql_buy_update3c = "update my_stock_pool w set w.hold_days = (select '%i' from dual) where w.stock_code = '%s'" % (1, stock_code)
+    cursor.execute(sql_buy_update3)
+    cursor.execute(sql_buy_update3b)
+    cursor.execute(sql_buy_update3c)
+    db.commit()
+
+def delete_my_stock_poll(stock_code):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_sell_update = "delete from my_stock_pool where stock_code = '%s'" % (stock_code)
+    cursor.execute(sql_sell_update)
+    db.commit()

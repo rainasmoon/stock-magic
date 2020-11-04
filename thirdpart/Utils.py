@@ -2,7 +2,7 @@ import datetime
 
 year = 2020
 date_start = str(year) + '-03-01'
-date_end = str(year) + '-04-05'
+date_end = str(year) + '-03-05'
 
 stock_pool = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
 
