@@ -1,4 +1,3 @@
-import pymysql.cursors
 import DBUtils
 
 class Deal(object):
@@ -18,9 +17,7 @@ class Deal(object):
         cursor = db.cursor()
         try:
 
-            sql_select = 'select * from my_capital a order by seq desc limit 1'
-            cursor.execute(sql_select)
-            done_set = cursor.fetchall()
+            done_set = DBUtils.select_my_capital()
             
             self.cur_capital = 0.00
             self.cur_money_lock = 0.00
@@ -29,9 +26,7 @@ class Deal(object):
                 self.cur_capital = float(done_set[0][0])
                 self.cur_money_rest = float(done_set[0][2])
             
-            sql_select2 = 'select * from my_stock_pool'
-            cursor.execute(sql_select2)
-            done_set2 = cursor.fetchall()
+            done_set2 = DBUtils.select_my_stock_pool()
             
             self.stock_pool = []
             self.stock_all = []
@@ -47,10 +42,7 @@ class Deal(object):
                 self.stock_map3 = {x[0]: int(x[3]) for x in done_set2}
             for i in range(len(done_set2)):
                 
-                sql = "select * from stock_info a where a.stock_code = '%s' and a.state_dt = '%s'"%(done_set2[i][0],state_dt)
-                cursor.execute(sql)
-                done_temp = cursor.fetchall()
-                db.commit()
+                done_temp = DBUtils.select_stock_info(state_dt, done_set2[i][0])
                 
                 self.cur_money_lock += float(done_temp[0][3]) * float(done_set2[i][2])
             # sql_select3 = 'select * from ban_list'
@@ -61,7 +53,5 @@ class Deal(object):
 
 
         except Exception as excp:
-            #db.rollback()
             print(excp)
 
-        db.close()

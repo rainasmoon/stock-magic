@@ -36,6 +36,11 @@ def get_stock_canlender(startdate, enddate):
 
     return list(df.iloc[:,1])
 
+def get_daily(stock_code, start_dt, end_dt):
+
+    df = get_pro().daily(ts_code=stock_code, start_date=start_dt, end_date=end_dt)
+    return df
+
 if __name__ == '__main__':
     print('test')
     aresult = get_stock_canlender('2020-01-01', '2020-10-01')

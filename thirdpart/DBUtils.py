@@ -30,6 +30,14 @@ def clear_db():
     db.commit()
     db.close()
 
+def clear_stock():
+    db = get_conn()
+    cursor = db.cursor()
+    sql = 'truncate table stock_all'
+    cursor.execute(sql)
+    db.commit()
+    db.close()
+
 def clear_ev_mid():
     db = get_conn()
     cursor = db.cursor()
@@ -65,6 +73,14 @@ def select_stock_info(opdate, stock_code):
     db.commit()
     db.close()
     return done_set_buy
+
+def insert_stock(state_dt,stock_code,open_price,close,high,low,vol,amount,pre_close,amt_change,pct_change):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_insert = "INSERT INTO stock_all(state_dt,stock_code,open,close,high,low,vol,amount,pre_close,amt_change,pct_change) VALUES ('%s', '%s', '%.2f', '%.2f','%.2f','%.2f','%i','%.2f','%.2f','%.2f','%.2f')" % (state_dt,stock_code,open_price,close,high,low,vol,amount,pre_close,amt_change,pct_change) 
+    cursor.execute(sql_insert)
+    db.commit()
 
 def select_stock(stock, start_dt, end_dt):
     db = get_conn()
