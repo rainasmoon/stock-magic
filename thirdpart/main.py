@@ -85,5 +85,6 @@ if __name__ == '__main__':
     date_seq_start = Utils.date_start
     date_seq_end = Utils.date_end
 
+    trade(date_seq_start, date_seq_end)
     show_pic(date_seq_start, date_seq_end)
  
