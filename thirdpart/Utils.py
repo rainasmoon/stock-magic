@@ -1,11 +1,13 @@
 import datetime
 from pylab import np
 
-year = 2020
-date_start = str(year) + '-03-01'
-date_end = str(year) + '-03-05'
+day0 = '20100101'
 
-stock_pool = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
+year = 2020
+date_start = str(year) + '-10-01'
+date_end = str(year) + '-11-03'
+
+stock_pool = ['601633.SH', '300077.SZ', '300024.SZ', '002024.SZ', '600030.SH']
 
 def to_date(afulldate):
     return datetime.datetime.strptime(afulldate, '%Y-%m-%d')
@@ -20,6 +22,8 @@ def format_date(adate):
     return adate.strftime('%Y-%m-%d')
 
 def date2d(str):
+    if type(str) == datetime.datetime:
+        return format_d(str)
     return format_d(to_date(str))
 
 def d2date(str):

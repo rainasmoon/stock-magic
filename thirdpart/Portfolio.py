@@ -109,7 +109,7 @@ def get_portfolio(stock_list, state_dt, para_window):
 if __name__ == '__main__':
 
     pf = Utils.stock_pool
-    ans = get_portfolio(pf,'2020-10-01',90)
+    ans = get_portfolio(pf,'2020-11-01',90)
     
     print('**************  Market Trend  ****************')
     print('Risk : ' + str(round(ans[0][0], 2)))

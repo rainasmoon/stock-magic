@@ -6,9 +6,9 @@ Created on 2020年1月30日
 import pandas as pd
 import tushare as ts
 import TSUtils
-from sqlalchemy import create_engine 
+import DBUtils
 
-engine_ts = create_engine('mysql://stock:stock@127.0.0.1:3306/stocks?charset=utf8&use_unicode=1')
+engine_ts = DBUtils.get_engine()
 
 def read_data():
     sql = """SELECT * FROM stock_basic LIMIT 20"""

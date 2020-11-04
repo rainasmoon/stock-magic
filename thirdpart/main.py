@@ -31,40 +31,8 @@ def daily_trade(trade_date):
         except Exception as ex:
             print('ERROR:', ex)
             
+def show_pic(date_seq_start, date_seq_end):
 
-
-if __name__ == '__main__':
-
-    DBUtils.clear_db()
-    DBUtils.init_stock_pool()
-
-    date_seq_start = Utils.date_start
-    date_seq_end = Utils.date_end
- 
-    # 建回测时间序列
-    date_temp = TSUtils.get_stock_canlender(date_seq_start, date_seq_end)
-    date_seq = [(Utils.d2date(x)) for x in date_temp]
-    print(date_seq)
-
-    #开始模拟交易
-    index = 1
-    day_index = 0
-    for i in range(1,len(date_seq)):
-        print('To Date:' + date_seq[i])
-        day_index += 1
-        # 每日推进式建模，并获取对下一个交易日的预测结果
-        daily_trade(date_seq[i])
-        if divmod(day_index+4,5)[1] == 0:
-            update_ratio(date_seq[i], date_seq[i-1])
-        else:
-            update_only(date_seq[i], date_seq[i-1])
-
-    print('ALL FINISHED!!')
-
-    sharp,c_std = Utils.get_sharp_rate(DBUtils.select_my_capital())
-    print('Sharp Rate : ' + str(sharp))
-    print('Risk Factor : ' + str(c_std))
-    
     done_set_show_btc = DBUtils.select_index(date_seq_start, date_seq_end)
     btc_x = list(range(len(done_set_show_btc)))
     btc_y = [x[3] / done_set_show_btc[0][3] for x in done_set_show_btc]
@@ -80,3 +48,42 @@ if __name__ == '__main__':
     # 绘制收益率曲线（含大盘基准收益曲线）
 
     PltUtils.show_pic(btc_x, btc_y, profit_x, profit_y, dict_anti_x)
+
+def trade(date_seq_start, date_seq_end):
+
+    DBUtils.clear_db()
+    DBUtils.init_stock_pool()
+
+    # 建回测时间序列
+    date_temp = TSUtils.get_stock_canlender(date_seq_start, date_seq_end)
+    date_seq = [(Utils.d2date(x)) for x in date_temp]
+
+    #开始模拟交易
+    index = 1
+    day_index = 0
+    print('begin trade...')
+    for i in range(1,len(date_seq)):
+        print('To Date:' + date_seq[i])
+        day_index += 1
+        # 每日推进式建模，并获取对下一个交易日的预测结果
+        daily_trade(date_seq[i])
+        if divmod(day_index+4,5)[1] == 0:
+            print('update ratio...')
+            update_ratio(date_seq[i], date_seq[i-1])
+        else:
+            update_only(date_seq[i], date_seq[i-1])
+
+    print('ALL FINISHED!!')
+
+    sharp,c_std = Utils.get_sharp_rate(DBUtils.select_my_capital())
+    print('Sharp Rate : ' + str(sharp))
+    print('Risk Factor : ' + str(c_std))
+    
+
+if __name__ == '__main__':
+
+    date_seq_start = Utils.date_start
+    date_seq_end = Utils.date_end
+
+    show_pic(date_seq_start, date_seq_end)
+ 

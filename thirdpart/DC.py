@@ -14,6 +14,7 @@ class data_collect(object):
         
         if len(done_set) == 0:
             print("empty data...")
+            print('param: %s, %s, %s' %(in_code, start_dt, end_dt))
             raise Exception
         
         self.date_seq = []

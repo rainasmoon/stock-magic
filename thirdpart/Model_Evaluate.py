@@ -1,3 +1,4 @@
+## -*- encoding: utf-8 -*- ##
 import datetime
 import DC
 import DBUtils
@@ -7,7 +8,7 @@ import ModelUtils
 
 import traceback
 
-def model_eva(stock,state_dt,para_window,para_dc_window):
+def model_eva(stock, state_dt, para_window, para_dc_window):
     
     if DBUtils.select_ev_result(state_dt, stock) :
         print('Already ev:' + stock + ':' + state_dt)
@@ -15,13 +16,12 @@ def model_eva(stock,state_dt,para_window,para_dc_window):
     
     # 建评估时间序列, para_window参数代表回测窗口长度
 
-    model_test_date_start = (datetime.datetime.strptime(state_dt, '%Y-%m-%d') - datetime.timedelta(days=para_window)).strftime(
-        '%Y%m%d')
+    model_test_date_start = Utils.date2d((Utils.to_date(state_dt) -
+                             datetime.timedelta(days=para_window)))
     model_test_date_end = state_dt
     date_temp = TSUtils.get_stock_canlender(model_test_date_start,
                                             model_test_date_end)
-    model_test_date_seq = [(datetime.datetime.strptime(x, "%Y%m%d")).strftime('%Y-%m-%d') for x in date_temp]
-    print('date seq:', model_test_date_seq)
+    model_test_date_seq = [(Utils.d2date(x)) for x in date_temp]
 
     # 清空评估用的中间表model_ev_mid
     DBUtils.clear_ev_mid()
@@ -70,8 +70,8 @@ def model_eva(stock,state_dt,para_window,para_dc_window):
     return 1
 
 if __name__ == '__main__':
-    stock_pool = ['300666.SZ']
+    stock_pool = ['300077.SZ']
     for stock in stock_pool :
-        ans = model_eva(stock,'2018-03-01',90,365)
+        ans = model_eva(stock,'2020-11-03',90,365)
     print('All Finished !!')
 
