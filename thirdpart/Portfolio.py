@@ -1,6 +1,5 @@
 import numpy as np
 import datetime
-import pymysql
 import copy
 import DBUtils
 import TSUtils

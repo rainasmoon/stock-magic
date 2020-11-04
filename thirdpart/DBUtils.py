@@ -20,16 +20,15 @@ def clear_db():
     # 先清空之前的测试记录,并创建中间表
     sql_wash1 = 'delete from my_capital where seq != 1'
     cursor.execute(sql_wash1)
-    db.commit()
 
     sql_wash3 = 'truncate table my_stock_pool'
     cursor.execute(sql_wash3)
-    db.commit()
 
     # 清空行情源表，并插入相关股票的行情数据。该操作是为了提高回测计算速度而剔除行情表(stock_all)中的冗余数据。
     sql_wash4 = 'truncate table stock_info'
     cursor.execute(sql_wash4)
     db.commit()
+    db.close()
 
 def clear_ev_mid():
     db = get_conn()
@@ -37,6 +36,7 @@ def clear_ev_mid():
     sql_truncate_model_test = 'truncate table model_ev_mid'
     cursor.execute(sql_truncate_model_test)
     db.commit()
+    db.close()
 
 
 def init_stock_pool():
@@ -52,6 +52,7 @@ def init_stock_pool():
     sql_insert = "insert into stock_info(select * from stock_all a where a.stock_code in %s)"%(in_str)
     cursor.execute(sql_insert)
     db.commit()
+    db.close()
 
 def select_stock_info(opdate, stock_code):
     db = get_conn()
@@ -61,6 +62,8 @@ def select_stock_info(opdate, stock_code):
     cursor.execute(sql_buy)
     done_set_buy = cursor.fetchall()
 
+    db.commit()
+    db.close()
     return done_set_buy
 
 def select_stock(stock, start_dt, end_dt):
@@ -69,6 +72,9 @@ def select_stock(stock, start_dt, end_dt):
     sql_done_set = "SELECT * FROM stock_all a where stock_code = '%s' and state_dt >= '%s' and state_dt <= '%s' order by state_dt asc" % (stock , start_dt, end_dt)
     cursor.execute(sql_done_set)
     done_set = cursor.fetchall()
+    
+    db.commit()
+    db.close()
     return done_set
 
 def get_sharp_rate():
@@ -79,6 +85,7 @@ def get_sharp_rate():
     cursor.execute(sql_cap)
     done_exp = cursor.fetchall()
     db.commit()
+    
     cap_list = [float(x[0]) for x in done_exp]
     return_list = []
     base_cap = float(done_exp[0][0])
@@ -105,6 +112,10 @@ def count_recall():
     sql_resu_recall_mon = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_real = 1"
     cursor.execute(sql_resu_recall_mon)
     recall_mon = cursor.fetchall()[0][0]
+    
+    db.commit()
+    db.close()
+    
     if recall_mon == 0:
         print('WARN: recall_mon is 0!')
         return 0
@@ -121,6 +132,10 @@ def count_acc():
     sql_resu_acc_mon = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_predict = 1"
     cursor.execute(sql_resu_acc_mon)
     acc_mon = cursor.fetchall()[0][0]
+    
+    db.commit()
+    db.close()
+    
     if acc_mon == 0:
         acc = recall = acc_neg = f1 = 0
     else:
@@ -137,6 +152,10 @@ def count_acc_neg():
     sql_resu_acc_neg_mon = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_predict = -1"
     cursor.execute(sql_resu_acc_neg_mon)
     acc_neg_mon = cursor.fetchall()[0][0]
+    
+    db.commit()
+    db.close()
+
     if acc_neg_mon == 0:
         acc_neg_mon = -1
         acc_neg = -1
@@ -151,14 +170,17 @@ def update_ev_mid_with_real(stock, adate):
     sql_select = "select * from stock_all a where a.stock_code = '%s' and a.state_dt >= '%s' order by a.state_dt asc limit 2" % (stock, adate)
     cursor.execute(sql_select)
     done_set2 = cursor.fetchall()
+    
     resu = 0
     if len(done_set2) <= 1:
         resu = 0
     if float(done_set2[1][3]) / float(done_set2[0][3]) > 1.00:
         resu = 1
+    
     sql_update = "update model_ev_mid w set w.resu_real = '%.2f' where w.state_dt = '%s' and w.stock_code = '%s'" % (resu, adate, stock)
     cursor.execute(sql_update)
     db.commit()
+    db.close()
 
 def get_predict(adate):
     db = get_conn()
@@ -167,10 +189,30 @@ def get_predict(adate):
     sql_predict = "select resu_predict from model_ev_mid a where a.state_dt = '%s'" % (adate)
     cursor.execute(sql_predict)
     done_predict = cursor.fetchall()
+    
+    db.commit()
+    db.close()
+    
     predict = 0
     if len(done_predict) != 0:
         predict = int(done_predict[0][0])
 
+    return predict
+
+def get_stock_predict(adate, stock):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_predict = "select predict from model_ev_resu a where a.state_dt = '%s' and a.stock_code = '%s'"%(adate, stock)
+    cursor.execute(sql_predict)
+    done_set_predict = cursor.fetchall()
+    
+    db.commit()
+    db.close()
+
+    predict = 0
+    if len(done_set_predict) > 0:
+        predict = int(done_set_predict[0][0])
     return predict
 
 def insert_predict(adate, stock, predict):
@@ -179,6 +221,7 @@ def insert_predict(adate, stock, predict):
     sql_insert = "insert into model_ev_mid(state_dt,stock_code,resu_predict)values('%s','%s','%.2f')" % (adate, stock, predict)
     cursor.execute(sql_insert)
     db.commit()
+    db.close()
 
 def select_ev_result(state_dt, stock):
     db = get_conn()
@@ -188,6 +231,10 @@ def select_ev_result(state_dt, stock):
 
     cursor.execute(sql)
     ev_result = cursor.fetchall()
+
+    db.commit()
+    db.close()
+
     return ev_result
 
 def insert_ev_result(state_dt, stock, acc, recall, f1, acc_neg, amodel, predict):
@@ -196,6 +243,7 @@ def insert_ev_result(state_dt, stock, acc, recall, f1, acc_neg, amodel, predict)
     
     sql_final_insert = "insert into model_ev_resu(state_dt,stock_code,acc,recall,f1,acc_neg,bz,predict)values('%s','%s','%.4f','%.4f','%.4f','%.4f','%s','%s')" % (state_dt, stock, acc, recall, f1, acc_neg, 'svm', str(predict))
     cursor.execute(sql_final_insert)
+    
     db.commit()
     db.close()
 
@@ -207,6 +255,9 @@ def select_index(date_seq_start, date_seq_end):
     cursor.execute(sql_show_btc)
     done_set_show_btc = cursor.fetchall()
     
+    db.commit()
+    db.close()
+
     return done_set_show_btc
 
 def select_profit():
@@ -217,6 +268,9 @@ def select_profit():
     cursor.execute(sql_show_profit)
     done_set_show_profit = cursor.fetchall()
     
+    db.commit()
+    db.close()
+
     return done_set_show_profit
 
 def insert_my_capital(new_capital, new_money_lock,new_money_rest, act,
@@ -226,26 +280,32 @@ def insert_my_capital(new_capital, new_money_lock,new_money_rest, act,
 
     sql_sell_insert = "insert into my_capital(capital,money_lock,money_rest,deal_action,stock_code,stock_vol,profit,profit_rate,bz,state_dt,deal_price)values('%.2f','%.2f','%.2f','%s','%s','%.2f','%.2f','%.2f','%s','%s','%.2f')" %(new_capital,new_money_lock,new_money_rest,act,stock_code,vol,new_profit,new_profit_rate,bz,opdate, price)
     cursor.execute(sql_sell_insert)
+    
     db.commit()
+    db.close()
 
 def insert_my_stock_poll(stock_code, buy_price, vol):
     db = get_conn()
     cursor = db.cursor()
     sql_buy_update3 = "insert into my_stock_pool(stock_code,buy_price,hold_vol,hold_days) VALUES ('%s','%.2f','%i','%i')" % (stock_code, buy_price, vol, int(1))
     cursor.execute(sql_buy_update3)
+    
     db.commit()
-
+    db.close()
 
 def update_my_stock_poll(stock_code, new_buy_price, new_vol):
     db = get_conn()
     cursor = db.cursor()
+
     sql_buy_update3 = "update my_stock_pool w set w.buy_price = (select '%.2f' from dual) where w.stock_code = '%s'" % (new_buy_price, stock_code)
     sql_buy_update3b = "update my_stock_pool w set w.hold_vol = (select '%i' from dual) where w.stock_code = '%s'" % (new_vol, stock_code)
     sql_buy_update3c = "update my_stock_pool w set w.hold_days = (select '%i' from dual) where w.stock_code = '%s'" % (1, stock_code)
     cursor.execute(sql_buy_update3)
     cursor.execute(sql_buy_update3b)
     cursor.execute(sql_buy_update3c)
+    
     db.commit()
+    db.close()
 
 def delete_my_stock_poll(stock_code):
     db = get_conn()
@@ -253,4 +313,16 @@ def delete_my_stock_poll(stock_code):
 
     sql_sell_update = "delete from my_stock_pool where stock_code = '%s'" % (stock_code)
     cursor.execute(sql_sell_update)
+    
     db.commit()
+    db.close()
+
+def update_hold_days():
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_update_hold_days = 'update my_stock_pool w set w.hold_days = w.hold_days + 1'
+    cursor.execute(sql_update_hold_days)
+    
+    db.commit()
+    db.close()
