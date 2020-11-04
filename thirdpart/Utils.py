@@ -1,4 +1,5 @@
 import datetime
+from pylab import np
 
 year = 2020
 date_start = str(year) + '-03-01'
@@ -32,3 +33,20 @@ def count_F1(a, b):
         f1 = (2 * a * b)/(a + b)
 
     return f1
+
+def get_sharp_rate(done_exp):
+    cap_list = [float(x[0]) for x in done_exp]
+    return_list = []
+    base_cap = float(done_exp[0][0])
+    for i in range(len(cap_list)):
+        if i == 0:
+            return_list.append(float(1.00))
+        else:
+            ri = (float(done_exp[i][0]) - float(done_exp[0][0]))/float(done_exp[0][0])
+            return_list.append(ri)
+    std = float(np.array(return_list).std())
+    exp_portfolio = (float(done_exp[-1][0]) - float(done_exp[0][0]))/float(done_exp[0][0])
+    exp_norisk = 0.04*(5.0/12.0)
+    sharp_rate = (exp_portfolio - exp_norisk)/(std)
+
+    return sharp_rate,std

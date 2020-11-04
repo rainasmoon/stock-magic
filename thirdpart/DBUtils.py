@@ -77,7 +77,7 @@ def select_stock(stock, start_dt, end_dt):
     db.close()
     return done_set
 
-def get_sharp_rate():
+def select_my_capital():    
     db = get_conn()
     cursor = db.cursor()
 
@@ -85,23 +85,9 @@ def get_sharp_rate():
     cursor.execute(sql_cap)
     done_exp = cursor.fetchall()
     db.commit()
+    db.close()
+    return done_exp
     
-    cap_list = [float(x[0]) for x in done_exp]
-    return_list = []
-    base_cap = float(done_exp[0][0])
-    for i in range(len(cap_list)):
-        if i == 0:
-            return_list.append(float(1.00))
-        else:
-            ri = (float(done_exp[i][0]) - float(done_exp[0][0]))/float(done_exp[0][0])
-            return_list.append(ri)
-    std = float(np.array(return_list).std())
-    exp_portfolio = (float(done_exp[-1][0]) - float(done_exp[0][0]))/float(done_exp[0][0])
-    exp_norisk = 0.04*(5.0/12.0)
-    sharp_rate = (exp_portfolio - exp_norisk)/(std)
-
-    return sharp_rate,std
-
 def count_recall():
     db = get_conn()
     cursor = db.cursor()
@@ -326,3 +312,15 @@ def update_hold_days():
     
     db.commit()
     db.close()
+
+def select_my_stock_pool():
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_pool = "select * from my_stock_pool"
+    cursor.execute(sql_pool)
+    done_set = cursor.fetchall()
+    db.commit()
+    db.close()
+
+    return done_set

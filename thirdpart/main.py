@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     print('ALL FINISHED!!')
 
-    sharp,c_std = DBUtils.get_sharp_rate()
+    sharp,c_std = Utils.get_sharp_rate(DBUtils.select_my_capital())
     print('Sharp Rate : ' + str(sharp))
     print('Risk Factor : ' + str(c_std))
     
