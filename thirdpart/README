@@ -2,5 +2,4 @@ need to run Init_StockAll_Sp.py to get the stock data;
 
 need to run mysql.py to get the index data.
 
-maybe one day we can change the get trade day local.
-
+after all, can work offline now.
