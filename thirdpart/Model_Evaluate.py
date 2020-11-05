@@ -19,7 +19,7 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
     model_test_date_start = Utils.date2d((Utils.to_date(state_dt) -
                              datetime.timedelta(days=para_window)))
     model_test_date_end = state_dt
-    date_temp = TSUtils.get_stock_canlender(model_test_date_start,
+    date_temp = TSUtils.get_stock_calender(model_test_date_start,
                                             model_test_date_end)
     model_test_date_seq = [(Utils.d2date(x)) for x in date_temp]
 

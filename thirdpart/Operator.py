@@ -71,7 +71,7 @@ def sell(stock_code,opdate,predict):
         new_profit = (sell_price-init_price)*hold_vol
         new_profit_rate = sell_price/init_price
 
-        DBUtils.insert_my_captial(new_capital,new_money_lock,new_money_rest,'SELL',stock_code,hold_vol,new_profit,new_profit_rate,'BADSELL',opdate,sell_price)
+        DBUtils.insert_my_capital(new_capital,new_money_lock,new_money_rest,'SELL',stock_code,hold_vol,new_profit,new_profit_rate,'BADSELL',opdate,sell_price)
         DBUtils.delete_my_stock_poll(stock_code)
         
         return 1

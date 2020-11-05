@@ -1,5 +1,6 @@
 ## encoding: utf-8 ##
 import pymysql
+import datetime
 import Utils
 from sqlalchemy import create_engine 
 from pylab import np
@@ -14,6 +15,16 @@ def get_engine():
 
 def get_conn():
     return get_mysql_conn()
+
+def truncate(table_name):
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql = 'truncate table ' + table_name
+    cursor.execute(sql)
+    
+    db.commit();
+    db.close();
 
 def clear_db():
     db = get_conn()
@@ -360,3 +371,35 @@ def select_my_stock_pool():
     db.close()
 
     return done_set
+
+
+def get_stock_calender(startdate, enddate):
+    start = startdate
+    end = enddate
+    if type(startdate) == datetime.datetime:
+        start = Utils.format_d(startdate)
+    elif(len(startdate) != 8):
+        start = Utils.date2d(startdate)
+    
+    if type(enddate) == datetime.datetime:
+        end = Utils.format_d(enddate)
+    elif(len(enddate) != 8):
+        end = Utils.date2d(enddate)
+    
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql ="select cal_date from calender where cal_date >= '%s' and cal_date < '%s'" % (start, end)
+
+    cursor.execute(sql)
+
+    cal_seq = cursor.fetchall()
+    
+    db.commit()
+    db.close()
+    
+    return [x[0] for x in cal_seq]
+
+if __name__ == '__main__':
+    seq = get_stock_calender('2000-01-01', '2000-01-10')
+    print(seq)

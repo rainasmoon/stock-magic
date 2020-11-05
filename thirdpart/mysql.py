@@ -10,8 +10,8 @@ import DBUtils
 
 engine_ts = DBUtils.get_engine()
 
-def read_data():
-    sql = """SELECT * FROM stock_basic LIMIT 20"""
+def read_data(table_name):
+    sql = "SELECT * FROM " + table_name +  " LIMIT 20"
     df = pd.read_sql_query(sql, engine_ts)
     return df
 
@@ -22,7 +22,7 @@ def write_data(df, sql_table):
 
 
 def get_data():
-    df = read_data()
+    df = read_data('stock_basic')
     if df.empty:
         pro = TSUtils.get_pro()
         print('CALL Tushare...')
@@ -36,8 +36,18 @@ def get_index():
     write_data(df, 'stock_index')
     return df
 
+def get_calender(start, end):
+    print('CALL pro ...')
+    df = TSUtils.get_pro().trade_cal(exchange_id='SSE', is_open=1, start_date=start, end_date=end)
+    write_data(df, 'calender')
+    return df
+
 
 if __name__ == '__main__':
+    DBUtils.truncate('stock_index')
     df = get_index()
+    DBUtils.truncate('calender')
+    df = get_calender('20000101', '20201104')
+
+    df = read_data('calender')
     print(df.tail())
-    print('end.')

@@ -41,7 +41,7 @@ def get_portfolio(stock_list, state_dt, para_window):
 
     # 建评估时间序列, para_window参数代表回测窗口长度
     model_test_date_start =Utils.to_date(state_dt) - datetime.timedelta(days=para_window)
-    date_temp = TSUtils.get_stock_canlender(model_test_date_start, state_dt)
+    date_temp = DBUtils.get_stock_calender(model_test_date_start, state_dt)
     model_test_date_seq = [(Utils.d2date(x)) for x in date_temp]
 
     list_return = []

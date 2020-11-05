@@ -55,7 +55,7 @@ def trade(date_seq_start, date_seq_end):
     DBUtils.init_stock_pool()
 
     # 建回测时间序列
-    date_temp = TSUtils.get_stock_canlender(date_seq_start, date_seq_end)
+    date_temp = DBUtils.get_stock_calender(date_seq_start, date_seq_end)
     date_seq = [(Utils.d2date(x)) for x in date_temp]
 
     #开始模拟交易

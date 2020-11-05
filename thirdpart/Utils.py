@@ -3,11 +3,12 @@ from pylab import np
 
 day0 = '20100101'
 
-year = 2020
-date_start = str(year) + '-10-01'
-date_end = str(year) + '-11-03'
+year = 2018
+date_start = str(year) + '-03-01'
+date_end = str(year) + '-04-01'
 
-stock_pool = ['601633.SH', '300077.SZ', '300024.SZ', '002024.SZ', '600030.SH']
+#stock_pool = ['601633.SH', '300077.SZ', '300024.SZ', '002024.SZ', '600030.SH']
+stock_pool = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
 
 def to_date(afulldate):
     return datetime.datetime.strptime(afulldate, '%Y-%m-%d')
