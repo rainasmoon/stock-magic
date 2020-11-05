@@ -44,10 +44,18 @@ def get_calender(start, end):
 
 
 if __name__ == '__main__':
+    print('clear stock_index...')
     DBUtils.truncate('stock_index')
+    
+    print('set stock_index...')
     df = get_index()
+
+    print('clear calender...')
     DBUtils.truncate('calender')
+
+    print('set calender...')
     df = get_calender('20000101', '20201104')
 
+    print('SAMPLE:')
     df = read_data('calender')
     print(df.tail())

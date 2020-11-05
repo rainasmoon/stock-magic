@@ -14,11 +14,11 @@ if __name__ == '__main__':
     stock_pool = Utils.stock_pool
     total = len(stock_pool)
     
+    print('clear stock...')
     DBUtils.clear_stock()
     # 循环获取单个股票的日线行情
     for i in range(len(stock_pool)):
-        try:
-
+        try:            
             df = TSUtils.get_daily(stock_pool[i], start_dt, end_dt)
 			# 打印进度
             c_len = df.shape[0]

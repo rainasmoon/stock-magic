@@ -51,6 +51,8 @@ def show_pic(date_seq_start, date_seq_end):
 def trade(date_seq_start, date_seq_end):
 
     DBUtils.clear_db()
+    DBUtils.truncate('model_ev_mid')
+    DBUtils.truncate('model_ev_resu')
     DBUtils.init_stock_pool()
 
     # 建回测时间序列
