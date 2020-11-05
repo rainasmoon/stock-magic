@@ -31,10 +31,44 @@ def count_ans_index(aans):
 
     return ans_index
 
+def calculate(ans, ans_index, stock_matrix):
+
+    resu = []
+    
+    print()
+    print(ans_index)
+    for k in range(len(ans_index)):
+        one_case = []
+        
+        # risk
+        one_case.append(ans_index[k])
+
+        content_temp1 = ans[1][np.argwhere(ans[0] == ans_index[k])[0][0]]
+        print(content_temp1)
+        r_position = []
+        position_sum = np.array([x for x in content_temp1 if x >= 0.00]).sum()
+        
+        for m in range(len(content_temp1)):
+            if content_temp1[m] >= 0 and position_sum > 0:
+                r_position.append(content_temp1[m]/position_sum)
+            else:
+                r_position.append(0.00)
+        
+        # position
+        one_case.append(r_position)
+        
+        # 计算夏普率
+        sharp = count_sharp(stock_matrix, r_position)
+
+        # sharp
+        one_case.append(sharp)
+        resu.append(one_case)
+
+    return resu
+
 
 # 返回的resu中 特征值按由小到大排列，对应的是其特征向量
 def get_portfolio(stock_list, state_dt, para_window):
-    # 建数据库连接，设置Tushare的token
 
     portfilio = stock_list
 
@@ -43,7 +77,7 @@ def get_portfolio(stock_list, state_dt, para_window):
     date_temp = DBUtils.get_stock_calender(model_test_date_start, state_dt)
     model_test_date_seq = [(Utils.d2date(x)) for x in date_temp]
 
-    list_return = []
+    stock_matrix = []
     for i in range(len(model_test_date_seq)-4):
         
         ti = model_test_date_seq[i]
@@ -73,60 +107,39 @@ def get_portfolio(stock_list, state_dt, para_window):
             del base_price
             del after_mean_price
 
-        list_return.append(ri)
+        stock_matrix.append(ri)
 
     # 求协方差矩阵
-    cov = count_cov(list_return) 
+    cov = count_cov(stock_matrix) 
     ans = count_ans(cov) 
     ans_index = count_ans_index(ans)
 
-    resu = []
-    
-    for k in range(len(ans_index)):
-        con_temp = []
-        con_temp.append(ans_index[k])
-        content_temp1 = ans[1][np.argwhere(ans[0] == ans_index[k])[0][0]]
-        content_temp2 = []
-        content_sum = np.array([x for x in content_temp1 if x >= 0.00]).sum()
-        
-        for m in range(len(content_temp1)):
-            if content_temp1[m] >= 0 and content_sum > 0:
-                content_temp2.append(content_temp1[m]/content_sum)
-            else:
-                content_temp2.append(0.00)
-        
-        con_temp.append(content_temp2)
-        
-        # 计算夏普率
-        sharp = count_sharp(list_return, content_temp2)
-
-        con_temp.append(sharp)
-        resu.append(con_temp)
+    resu = calculate(ans, ans_index, stock_matrix)
 
     return resu
 
 if __name__ == '__main__':
 
-    pf = Utils.stock_pool
-    ans = get_portfolio(pf, '2020-11-04', 90)
-    
+    stocks = Utils.stock_pool
+    results = get_portfolio(stocks, '2020-11-04', 90)
+
     print('**************  Market Trend  ****************')
-    print('Risk : ' + str(round(ans[0][0], 2)))
-    print('Sharp ratio : ' + str(round(ans[0][2], 2)))
+    print('Risk : ' + str(round(results[0][0], 2)))
+    print('Sharp ratio : ' + str(round(results[0][2], 2)))
 
     for i in range(5):
         print('----------------------------------------------')
-        print('Stock_code : ' + str(pf[i]) + '  Position : ' + str(round(ans[0][1][i] * 100, 2)) + '%')
+        print('Stock_code : ' + str(stocks[i]) + '  Position : ' + str(round(results[0][1][i] * 100, 2)) + '%')
     
     print('----------------------------------------------')
 
     print('**************  Best Return  *****************')
-    print('Risk : ' + str(round(ans[1][0], 2)))
-    print('Sharp ratio : ' + str(round(ans[1][2], 2)))
+    print('Risk : ' + str(round(results[1][0], 2)))
+    print('Sharp ratio : ' + str(round(results[1][2], 2)))
     
     for j in range(5):
         print('----------------------------------------------')
-        print('Stock_code : ' + str(pf[j]) + '  Position : ' + str(
-            round(ans[1][1][j] * 100, 2)) + '%')
+        print('Stock_code : ' + str(stocks[j]) + '  Position : ' + str(
+            round(results[1][1][j] * 100, 2)) + '%')
     
     print('----------------------------------------------')

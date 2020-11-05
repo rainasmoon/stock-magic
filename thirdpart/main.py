@@ -12,10 +12,12 @@ def update_ratio(aday, pre_day):
     portfolio_pool = Utils.stock_pool
     if len(portfolio_pool) < 5:
         print('Less than 5 stocks for portfolio!! state_dt : ' + str(aday))
+        
     pf_src = pf.get_portfolio(portfolio_pool, pre_day, Utils.year)
     # 取最佳收益方向的资产组合
     risk = pf_src[1][0]
     weight = pf_src[1][1]
+    
     Filter.filter_main(portfolio_pool, aday, pre_day, weight)
 
 def update_only(aday, pre_day):

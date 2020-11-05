@@ -127,14 +127,27 @@ def select_my_capital():
     return done_exp
 
 
+def select_my_newest_capital():    
+    db = get_conn()
+    cursor = db.cursor()
+
+    sql_cap = "select * from my_capital a order by seq desc limit 1"
+    cursor.execute(sql_cap)
+    newest_wallet = cursor.fetchall()
+    db.commit()
+    db.close()
+    
+    return newest_wallet
+
 def count_recall():
     db = get_conn()
     cursor = db.cursor()
 
-    sql_resu_recall_son = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_predict = 1 and a.resu_real = 1"
+    sql_resu_recall_son = "select count(*) from model_ev_mid a where a.resu_predict = 1 and a.resu_real = 1"
     cursor.execute(sql_resu_recall_son)
     recall_son = cursor.fetchall()[0][0]
-    sql_resu_recall_mon = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_real = 1"
+
+    sql_resu_recall_mon = "select count(*) from model_ev_mid a where a.resu_real = 1"
     cursor.execute(sql_resu_recall_mon)
     recall_mon = cursor.fetchall()[0][0]
 
@@ -154,10 +167,11 @@ def count_acc():
     db = get_conn()
     cursor = db.cursor()
 
-    sql_resu_acc_son = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_predict = 1 and a.resu_real = 1"
+    sql_resu_acc_son = "select count(*) from model_ev_mid a where a.resu_predict = 1 and a.resu_real = 1"
     cursor.execute(sql_resu_acc_son)
     acc_son = cursor.fetchall()[0][0]
-    sql_resu_acc_mon = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_predict = 1"
+
+    sql_resu_acc_mon = "select count(*) from model_ev_mid a where a.resu_predict = 1"
     cursor.execute(sql_resu_acc_mon)
     acc_mon = cursor.fetchall()[0][0]
 
@@ -165,7 +179,8 @@ def count_acc():
     db.close()
 
     if acc_mon == 0:
-        acc = recall = acc_neg = f1 = 0
+        print('WARN: ev mid predict result is 0.')
+        acc = 0
     else:
         acc = acc_son / acc_mon
 
@@ -176,10 +191,11 @@ def count_acc_neg():
     db = get_conn()
     cursor = db.cursor()
 
-    sql_resu_acc_neg_son = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_predict = -1 and a.resu_real = -1"
+    sql_resu_acc_neg_son = "select count(*) from model_ev_mid a where a.resu_predict = -1 and a.resu_real = -1"
     cursor.execute(sql_resu_acc_neg_son)
     acc_neg_son = cursor.fetchall()[0][0]
-    sql_resu_acc_neg_mon = "select count(*) from model_ev_mid a where a.resu_real is not null and a.resu_predict = -1"
+
+    sql_resu_acc_neg_mon = "select count(*) from model_ev_mid a where a.resu_predict = -1"
     cursor.execute(sql_resu_acc_neg_mon)
     acc_neg_mon = cursor.fetchall()[0][0]
 
@@ -206,9 +222,7 @@ def update_ev_mid_with_real(stock, adate):
     if len(done_set2) <= 1:
         return -1
     resu = 0
-    if len(done_set2) <= 1:
-        resu = 0
-    elif float(done_set2[1][3]) / float(done_set2[0][3]) > 1.00:
+    if float(done_set2[1][3]) / float(done_set2[0][3]) > 1.00:
         resu = 1
 
     sql_update = "update model_ev_mid w set w.resu_real = '%.2f' where w.state_dt = '%s' and w.stock_code = '%s'" % (resu, adate, stock)
@@ -277,7 +291,7 @@ def insert_ev_result(state_dt, stock, acc, recall, f1, acc_neg, amodel, predict)
     db = get_conn()
     cursor = db.cursor()
 
-    sql_final_insert = "insert into model_ev_resu(state_dt,stock_code,acc,recall,f1,acc_neg,bz,predict)values('%s','%s','%.4f','%.4f','%.4f','%.4f','%s','%s')" % (state_dt, stock, acc, recall, f1, acc_neg, 'svm', str(predict))
+    sql_final_insert = "insert into model_ev_resu(state_dt,stock_code,acc,recall,f1,acc_neg,bz,predict)values('%s','%s','%.4f','%.4f','%.4f','%.4f','%s','%s')" % (state_dt, stock, acc, recall, f1, acc_neg, amodel, str(predict))
     cursor.execute(sql_final_insert)
 
     db.commit()

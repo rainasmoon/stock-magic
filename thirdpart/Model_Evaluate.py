@@ -28,18 +28,19 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
     return_flag = 0
     # 开始回测，其中para_dc_window参数代表建模时数据预处理所需的时间窗长度
     for d in range(len(model_test_date_seq)):
-        model_test_new_start = (datetime.datetime.strptime(model_test_date_seq[d], '%Y-%m-%d') - datetime.timedelta(days=para_dc_window)).strftime('%Y-%m-%d')
+        model_test_new_start = Utils.d2date(Utils.to_date(model_test_date_seq[d]) - datetime.timedelta(days=para_dc_window))
         model_test_new_end = model_test_date_seq[d]
         try:
             dc = DC.data_collect(stock, model_test_new_start, model_test_new_end)
             if len(set(dc.data_target)) <= 1:
+                print('WARN: DC target is less than 1 record.')
                 continue
         except Exception as exp:
             print("DC Error")
             print(exp)
-            traceback.print_exc()
             return_flag = 1
             break
+
         train = dc.data_train
         target = dc.data_target
         test_case = [dc.test_case]
@@ -48,14 +49,18 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
        
         # 将预测结果插入到中间表
         DBUtils.insert_predict(model_test_new_end, stock, aresult)
+
     if return_flag == 1:
         acc = recall = acc_neg = f1 = 0
         return -1
+    
     # 在中间表中刷真实值
     for i in range(len(model_test_date_seq)):
         r = DBUtils.update_ev_mid_with_real(stock, model_test_date_seq[i])
         if r != 0:
+            print('WARN: break ev mid with real:' + stock)
             break
+
     # 计算查全率
     recall = DBUtils.count_recall()
     # 计算查准率
@@ -69,12 +74,16 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
     predict = DBUtils.get_predict(model_test_date_seq[-1])
     DBUtils.insert_ev_result(state_dt, stock, acc, recall, f1, acc_neg, 'svm',
                             predict)   
+   
     print(str(state_dt) + '   Precision : ' + str(acc) + '   Recall : ' + str(recall) + '   F1 : ' + str(f1) + '   Acc_Neg : ' + str(acc_neg))
+    
     return 1
 
 if __name__ == '__main__':
-    stock_pool = ['300077.SZ']
+    stock_pool = [Utils.stock_pool[0]]
+    print('truncate model_ev_resu')
+    DBUtils.truncate('model_ev_resu')
     for stock in stock_pool :
-        ans = model_eva(stock,'2020-11-05',90,365)
+        ans = model_eva(stock,'2020-11-04',90,365)
     print('All Finished !!')
 

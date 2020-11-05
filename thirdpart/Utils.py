@@ -28,6 +28,8 @@ def date2d(str):
     return format_d(to_date(str))
 
 def d2date(str):
+    if type(str) == datetime.datetime:
+        return format_date(str)
     return format_date(to_d(str))
 
 def count_F1(a, b):

@@ -41,7 +41,7 @@ class data_collect(object):
         self.cnt_pos = 0
         self.test_case = []
 
-        for i in range(1,len(self.close_list)):
+        for i in range(1, len(self.close_list)):
             train = [self.open_list[i-1], self.close_list[i-1], self.high_list[i-1], self.low_list[i-1], self.vol_list[i-1], self.amount_list[i-1]]
             self.data_train.append(np.array(train))
             if self.close_list[i]/self.close_list[i-1] > 1.0:
@@ -51,8 +51,11 @@ class data_collect(object):
                 self.data_target.append(float(0.00))
                 self.data_target_onehot.append([0,1,0])
 
+
         self.cnt_pos =len([x for x in self.data_target if x == 1.00])
+        
         self.test_case = np.array([self.open_list[-1],self.close_list[-1],self.high_list[-1],self.low_list[-1],self.vol_list[-1],self.amount_list[-1]])
+        
         self.data_train = np.array(self.data_train)
         self.data_target = np.array(self.data_target)
 

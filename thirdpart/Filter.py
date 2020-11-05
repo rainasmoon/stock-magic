@@ -2,11 +2,13 @@ import Deal
 import Operator
 import DBUtils
 
-def filter_main(stock_new,state_dt,predict_dt,poz):
+def filter_main(stock_new, state_dt, predict_dt, poz):
 
     #先更新持股天数
     DBUtils.update_hold_days()
 
+    
+    #根据最新的仓位调整相应持股比例
     #先卖出
     deal = Deal.Deal(state_dt)
     stock_pool_local = deal.stock_pool
