@@ -32,6 +32,8 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
         model_test_new_end = model_test_date_seq[d]
         try:
             dc = DC.data_collect(stock, model_test_new_start, model_test_new_end)
+            if len(set(dc.data_target)) <= 1:
+                continue
         except Exception as exp:
             print("DC Error")
             print(exp)
@@ -51,7 +53,9 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
         return -1
     # 在中间表中刷真实值
     for i in range(len(model_test_date_seq)):
-        DBUtils.update_ev_mid_with_real(stock, model_test_date_seq[i])
+        r = DBUtils.update_ev_mid_with_real(stock, model_test_date_seq[i])
+        if r != 0:
+            break
     # 计算查全率
     recall = DBUtils.count_recall()
     # 计算查准率

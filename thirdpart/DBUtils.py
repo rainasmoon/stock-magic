@@ -203,6 +203,8 @@ def update_ev_mid_with_real(stock, adate):
     cursor.execute(sql_select)
     done_set2 = cursor.fetchall()
 
+    if len(done_set2) <= 1:
+        return -1
     resu = 0
     if len(done_set2) <= 1:
         resu = 0
@@ -213,6 +215,7 @@ def update_ev_mid_with_real(stock, adate):
     cursor.execute(sql_update)
     db.commit()
     db.close()
+    return 0
 
 def get_predict(adate):
     db = get_conn()
