@@ -7,6 +7,7 @@ import pandas as pd
 import tushare as ts
 import TSUtils
 import DBUtils
+import Utils
 
 engine_ts = DBUtils.get_engine()
 
@@ -54,7 +55,7 @@ if __name__ == '__main__':
     DBUtils.truncate('calender')
 
     print('set calender...')
-    df = get_calender('20000101', '20201104')
+    df = get_calender(Utils.day0, Utils.get_today())
 
     print('SAMPLE:')
     df = read_data('calender')

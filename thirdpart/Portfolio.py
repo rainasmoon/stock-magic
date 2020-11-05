@@ -35,22 +35,19 @@ def calculate(ans, ans_index, stock_matrix):
 
     resu = []
     
-    print()
-    print(ans_index)
     for k in range(len(ans_index)):
         one_case = []
         
         # risk
         one_case.append(ans_index[k])
 
-        content_temp1 = ans[1][np.argwhere(ans[0] == ans_index[k])[0][0]]
-        print(content_temp1)
+        each_stock_case = ans[1][np.argwhere(ans[0] == ans_index[k])[0][0]]
         r_position = []
-        position_sum = np.array([x for x in content_temp1 if x >= 0.00]).sum()
+        position_sum = np.array([x for x in each_stock_case if x >= 0.00]).sum()
         
-        for m in range(len(content_temp1)):
-            if content_temp1[m] >= 0 and position_sum > 0:
-                r_position.append(content_temp1[m]/position_sum)
+        for m in range(len(each_stock_case)):
+            if each_stock_case[m] >= 0 and position_sum > 0:
+                r_position.append(each_stock_case[m]/position_sum)
             else:
                 r_position.append(0.00)
         
