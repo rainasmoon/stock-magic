@@ -15,23 +15,23 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
     
     # 建评估时间序列, para_window参数代表回测窗口长度
 
-    model_test_date_start = Utils.date2d((Utils.to_date(state_dt) -
+    ev_start = Utils.date2d((Utils.to_date(state_dt) -
                              datetime.timedelta(days=para_window)))
-    model_test_date_end = state_dt
-    date_temp = DBUtils.get_stock_calender(model_test_date_start,
-                                            model_test_date_end)
-    model_test_date_seq = [(Utils.d2date(x)) for x in date_temp]
+    ev_end = state_dt
+    date_temp = DBUtils.get_stock_calender(ev_start,
+                                            ev_end)
+    ev_dt_seq = [(Utils.d2date(x)) for x in date_temp]
 
     # 清空评估用的中间表model_ev_mid
     DBUtils.clear_ev_mid()
 
     return_flag = 0
     # 开始回测，其中para_dc_window参数代表建模时数据预处理所需的时间窗长度
-    for d in range(len(model_test_date_seq)):
-        model_test_new_start = Utils.d2date(Utils.to_date(model_test_date_seq[d]) - datetime.timedelta(days=para_dc_window))
-        model_test_new_end = model_test_date_seq[d]
+    for d in range(len(ev_dt_seq)):
+        dc_start_dt = Utils.d2date(Utils.to_date(ev_dt_seq[d]) - datetime.timedelta(days=para_dc_window))
+        dc_end_dt = ev_dt_seq[d]
         try:
-            dc = DC.data_collect(stock, model_test_new_start, model_test_new_end)
+            dc = DC.data_collect(stock, dc_start_dt, dc_end_dt)
             if len(set(dc.data_target)) <= 1:
                 print('WARN: DC target is less than 1 record.')
                 continue
@@ -48,7 +48,7 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
         aresult = ModelUtils.use_svm(train, target, test_case)
        
         # 将预测结果插入到中间表
-        DBUtils.insert_predict(model_test_new_end, stock, aresult)
+        DBUtils.insert_predict(dc_end_dt, stock, aresult)
 
     if return_flag == 1:
         print('WARN: something maybe wrong... when svm')
@@ -56,8 +56,8 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
         return -1
     
     # 在中间表中刷真实值
-    for i in range(len(model_test_date_seq)):
-        r = DBUtils.update_ev_mid_with_real(stock, model_test_date_seq[i])
+    for i in range(len(ev_dt_seq)):
+        r = DBUtils.update_ev_mid_with_real(stock, ev_dt_seq[i])
         if r != 0:
             print('WARN: break ev mid with real:' + stock)
             break
@@ -72,7 +72,7 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
     f1 = Utils.count_F1(acc, recall)
 
     # 将评估结果存入结果表model_ev_resu中
-    predict = DBUtils.get_predict(model_test_date_seq[-1])
+    predict = DBUtils.get_predict(ev_dt_seq[-1])
     DBUtils.insert_ev_result(state_dt, stock, acc, recall, f1, acc_neg, 'svm',
                             predict)   
    

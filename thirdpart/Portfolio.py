@@ -75,32 +75,32 @@ def get_portfolio(stock_list, state_dt, para_window):
     model_test_date_seq = [(Utils.d2date(x)) for x in date_temp]
 
     stock_matrix = []
-    for i in range(len(model_test_date_seq)-4):
+    for i in range(len(model_test_date_seq)-Utils.OVER_DUE_DAYS):
         
-        ti = model_test_date_seq[i]
         ri = []
         
         for j in range(len(portfilio)):
             
-            done_set = DBUtils.select_stock(portfilio[j],
+            stocks = DBUtils.select_stock(portfilio[j],
                                             model_test_date_seq[i],
-                                            model_test_date_seq[i+4] )
+                                            model_test_date_seq[i+Utils.OVER_DUE_DAYS] )
             
-            temp = [x[3] for x in done_set]
+            prices = [x[3] for x in stocks]
 
             base_price = 0.00
             after_mean_price = 0.00
             
-            if len(temp) <= 1:
+            if len(prices) <= 1:
                 r = 0.00
             else:
-                base_price = temp[0]
-                after_mean_price = np.array(temp[1:]).mean()
+                # 风险：当i天的股价与接下来持有股票期价股价均值的比值
+                base_price = prices[0]
+                after_mean_price = np.array(prices[1:]).mean()
                 r = (float(after_mean_price/base_price)-1.00)*100.00
             ri.append(r)
         
-            del done_set
-            del temp
+            del stocks
+            del prices
             del base_price
             del after_mean_price
 
