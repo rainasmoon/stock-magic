@@ -1,12 +1,23 @@
 # -*- coding:utf8 -*-
 import numpy as np
 import DBUtils
-
+import Utils
 
 class data_collect(object):
 
     def __init__(self, in_code, start_dt, end_dt):
         ans = self.collectDATA(in_code, start_dt, end_dt)
+
+    def __put_all_datas(self, i):
+        return [self.open_list[i], self.close_list[i], self.high_list[i], self.low_list[i], self.vol_list[i], self.amount_list[i]]
+
+    def __up(self, i):
+        if self.close_list[i]/self.close_list[i-1] > (1.00 + Utils.DAY_WAVE):
+            return 1
+        elif self.close_list[i]/self.close_list[i-1] < (1.00 - Utils.DAY_WAVE):
+            return 0 
+        else:
+            return 0
 
     def collectDATA(self, in_code, start_dt, end_dt):
         # 建立数据库连接，获取日线基础行情(开盘价，收盘价，最高价，最低价，成交量，成交额)
@@ -42,15 +53,18 @@ class data_collect(object):
         self.test_case = []
 
         for i in range(1, len(self.close_list)):
-            train = [self.open_list[i-1], self.close_list[i-1], self.high_list[i-1], self.low_list[i-1], self.vol_list[i-1], self.amount_list[i-1]]
-            self.data_train.append(np.array(train))
-            if self.close_list[i]/self.close_list[i-1] > 1.0:
+            one_train_case = self.__put_all_datas(i-1)
+            self.data_train.append(np.array(one_train_case))
+
+            if self.__up(i) == 1:
                 self.data_target.append(float(1.00))
                 self.data_target_onehot.append([1,0,0])
+            elif self.__up(i) == -1:
+                self.data_target.append(float(-1.00))
+                self.data_target_onehot.append([0,0,1])
             else:
                 self.data_target.append(float(0.00))
                 self.data_target_onehot.append([0,1,0])
-
 
         self.cnt_pos =len([x for x in self.data_target if x == 1.00])
         

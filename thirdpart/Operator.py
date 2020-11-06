@@ -1,5 +1,6 @@
 import Deal
 import DBUtils
+import Utils
 
 def buy(stock_code,opdate,buy_money):
     deal_buy = Deal.Deal(opdate)
@@ -22,7 +23,7 @@ def buy(stock_code,opdate,buy_money):
         vol = vol * 100
         
         if vol == 0:
-            print('INFO: vol is 0... -' + stock_code)
+            print('INFO: vol is 0, money is not enough... -' + stock_code)
             return 0
         
         new_capital = deal_buy.cur_capital - vol * buy_price * 0.0005
@@ -32,7 +33,7 @@ def buy(stock_code,opdate,buy_money):
         DBUtils.insert_my_capital(new_capital, new_money_lock,new_money_rest,
                                   'BUY', stock_code, vol, 0.0, 0.0, 'init', opdate, buy_price) 
         if stock_code in deal_buy.stock_all:
-            new_buy_price = (deal_buy.stock_map1[stock_code] * deal_buy.stocks_hold_vol[stock_code] + vol * buy_price) / (deal_buy.stocks_hold_vol[stock_code] + vol)
+            new_buy_price = (deal_buy.stocks_buy_price[stock_code] * deal_buy.stocks_hold_vol[stock_code] + vol * buy_price) / (deal_buy.stocks_hold_vol[stock_code] + vol)
             new_vol = deal_buy.stocks_hold_vol[stock_code] + vol
 
             DBUtils.update_my_stock_poll(stock_code, new_buy_price, new_vol)
@@ -65,19 +66,20 @@ def sell(stock_code, opdate, predict):
     stock_2_sell = DBUtils.select_stock_info(opdate, stock_code)
     
     if len(stock_2_sell) == 0:
+        print('WARN: no stock info. wired. return. pls check')
         return -1
     
     sell_price = float(stock_2_sell[0][3])
 
-    if sell_price > init_price*1.03 and hold_vol > 0:
+    if sell_price > init_price*Utils.GOOD_THREADHOLD and hold_vol > 0:
         record_sell(deal, opdate, stock_code, init_price, sell_price, hold_vol, 'SELL', 'GOODSELL')
         return 1
 
-    elif sell_price < init_price*0.97 and hold_vol > 0:
+    elif sell_price < init_price*Utils.BAD_THREADHOLD and hold_vol > 0:
         record_sell(deal, opdate, stock_code, init_price, sell_price, hold_vol, 'SELL', 'BADSELL')
         return 1
 
-    elif hold_days >= 4 and hold_vol > 0:
+    elif hold_days >= Utils.OVER_DUE_DAYS and hold_vol > 0:
         record_sell(deal, opdate, stock_code, init_price, sell_price, hold_vol, 'OVERTIME',
                     'OVERTIMESELL')
         return 1

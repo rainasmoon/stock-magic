@@ -1,6 +1,12 @@
 import datetime
 from pylab import np
 
+GOOD_THREADHOLD = 1.03
+BAD_THREADHOLD = 0.97
+OVER_DUE_DAYS = 4
+
+DAY_WAVE = 0.0
+
 day0 = '20100101'
 
 year = 2020

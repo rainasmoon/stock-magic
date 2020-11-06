@@ -51,6 +51,7 @@ def model_eva(stock, state_dt, para_window, para_dc_window):
         DBUtils.insert_predict(model_test_new_end, stock, aresult)
 
     if return_flag == 1:
+        print('WARN: something maybe wrong... when svm')
         acc = recall = acc_neg = f1 = 0
         return -1
     

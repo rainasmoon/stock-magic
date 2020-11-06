@@ -179,7 +179,7 @@ def count_acc():
     db.close()
 
     if acc_mon == 0:
-        print('WARN: ev mid predict result is 0.')
+        print('INFO: ev mid predict result is 0. no up predict in db...')
         acc = 0
     else:
         acc = acc_son / acc_mon
@@ -220,6 +220,7 @@ def update_ev_mid_with_real(stock, adate):
     done_set2 = cursor.fetchall()
 
     if len(done_set2) <= 1:
+        print('WARN: less than 2 record in stock_all. so return.(%s, %s)'% (stock, adate))
         return -1
     resu = 0
     if float(done_set2[1][3]) / float(done_set2[0][3]) > 1.00:
