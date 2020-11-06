@@ -52,6 +52,7 @@ def show_pic(date_seq_start, date_seq_end):
 
 def trade(date_seq_start, date_seq_end):
 
+    print('clear db...')
     DBUtils.clear_db()
     DBUtils.truncate('model_ev_mid')
     DBUtils.truncate('model_ev_resu')

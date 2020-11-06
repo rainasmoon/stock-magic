@@ -15,7 +15,7 @@ class data_collect(object):
         if self.close_list[i]/self.close_list[i-1] > (1.00 + Utils.DAY_WAVE):
             return 1
         elif self.close_list[i]/self.close_list[i-1] < (1.00 - Utils.DAY_WAVE):
-            return 0 
+            return Utils.MINUS 
         else:
             return 0
 

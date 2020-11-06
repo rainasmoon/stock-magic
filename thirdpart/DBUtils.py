@@ -217,14 +217,16 @@ def update_ev_mid_with_real(stock, adate):
 
     sql_select = "select * from stock_all a where a.stock_code = '%s' and a.state_dt >= '%s' order by a.state_dt asc limit 2" % (stock, adate)
     cursor.execute(sql_select)
-    done_set2 = cursor.fetchall()
+    latest_2_days_record = cursor.fetchall()
 
-    if len(done_set2) <= 1:
+    if len(latest_2_days_record) <= 1:
         print('WARN: less than 2 record in stock_all. so return.(%s, %s)'% (stock, adate))
         return -1
     resu = 0
-    if float(done_set2[1][3]) / float(done_set2[0][3]) > 1.00:
+    if float(latest_2_days_record[1][3]) / float(latest_2_days_record[0][3]) > (1.00 + Utils.DAY_WAVE):
         resu = 1
+    elif float(latest_2_days_record[1][3])/ float(latest_2_days_record[0][3]) < (1.00 - Utils.DAY_WAVE):
+        resu = Utils.MINUS
 
     sql_update = "update model_ev_mid w set w.resu_real = '%.2f' where w.state_dt = '%s' and w.stock_code = '%s'" % (resu, adate, stock)
     cursor.execute(sql_update)
