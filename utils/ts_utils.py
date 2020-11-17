@@ -49,11 +49,10 @@ def make_ts_code(df):
     return df
 
 
-def call_last_tradeday_before(aday):
-# don't have permitions
-#     df = pro.trade_cal(exchange='', start_date=aday, end_date=aday)
-
-    return '20191122'
+def call_last_tradeday(aday):
+    df = pro.trade_cal(exchange='SSE', is_open='1', start_date='20150601',
+                       end_date='20150630', fields='cal_date')
+    return df
 
 
 def call_all_stocks():
@@ -388,7 +387,5 @@ def call_shibor():
 
 
 if __name__ == '__main__':
-    r = call_daily('20191202')
-    print(r)
-    r = call_stock_qfq('000001.SZ', '20191001', '20191101')
+    r = call_last_tradeday('20150607')
     print(r)

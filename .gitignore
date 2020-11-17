@@ -2,3 +2,4 @@ config_api.json
 __pycache__/
 *.pyc
 /datas
+pic/
