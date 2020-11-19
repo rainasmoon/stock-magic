@@ -1,4 +1,4 @@
-config_api.json
+config.conf
 __pycache__/
 *.pyc
 /datas
