@@ -16,6 +16,7 @@ date_end = str(year) + '-11-01'
 
 stock_pool = ['601633.SH', '300077.SZ', '300024.SZ', '002024.SZ', '600030.SH']
 #stock_pool = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
+IMP_DAYS = []
 
 def to_date(afulldate):
     return datetime.datetime.strptime(afulldate, '%Y-%m-%d')
@@ -73,3 +74,15 @@ def get_sharp_rate(done_exp):
     sharp_rate = (exp_portfolio - exp_norisk)/(std)
 
     return sharp_rate, std
+
+def today():
+    today = datetime.date.today()
+    return today.strftime('%Y%m%d')
+
+def yesterday():
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    return yesterday.strftime("%Y%m%d")
+
+if __name__ == '__main__':
+    print(today())
+    print(yesterday())

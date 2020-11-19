@@ -1,5 +1,6 @@
 ## encoding: utf-8
 import ts_utils
+import ts_pro
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -13,9 +14,11 @@ mpl.rcParams['font.sans-serif'] = ['SimHei']
 # 画图时显示负号
 mpl.rcParams['axes.unicode_minus'] = False
 
+PATH = '../datas/pic/'
+
 def draw_pic(aday):
     print('RUN on day:' + aday)
-    df = ts_utils.call_daily(aday)
+    df = ts_pro.call_daily(aday)
 
     prices = df['close']
     prices = prices.sort_values(ascending = True)
@@ -24,13 +27,13 @@ def draw_pic(aday):
     prices.plot()
     plt.title('今日收盘排序价分布')
     plt.grid(True)
-    plt.savefig('./pic/close_prices_test'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'close_prices_test'+aday+'.png', bbox_inches='tight')
     plt.close()
 
     plt.figure()
     prices.hist(bins=100)
     plt.title('收盘价价格分布 ')
-    plt.savefig('./pic/close_prices'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'close_prices'+aday+'.png', bbox_inches='tight')
 
     plt.close()
 
@@ -40,7 +43,7 @@ def draw_pic(aday):
     plt.figure()
     price_l.plot()
     plt.title('<= 50 stocks')
-    plt.savefig('./pic/class1_stocks'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'class1_stocks'+aday+'.png', bbox_inches='tight')
     plt.close()
 
     price_h = df[(df['close'] > 50) & (df['close'] <= 400)]['close']
@@ -50,7 +53,7 @@ def draw_pic(aday):
     if not price_h.empty:
         price_h.plot()
     plt.title('50-400 stocks')
-    plt.savefig('./pic/class2_stocks'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'class2_stocks'+aday+'.png', bbox_inches='tight')
     plt.close()
 
     price_50 = df[df['close'] > 50]
@@ -77,13 +80,13 @@ def draw_pic(aday):
     plt.figure()
     p_ratio.hist(bins=40)
     plt.title('回报率分布')
-    plt.savefig('./pic/return_ratio_1'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'return_ratio_1'+aday+'.png', bbox_inches='tight')
     plt.close()
 
     plt.figure()
     sns.kdeplot(p_ratio)
     plt.title('回报率')
-    plt.savefig('./pic/return_ratio_0'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'return_ratio_0'+aday+'.png', bbox_inches='tight')
     plt.close()
 
     p_ratio = p_ratio.sort_values(ascending = True)
@@ -91,28 +94,27 @@ def draw_pic(aday):
     plt.figure()
     p_ratio.plot()
     plt.title('回报率')
-    plt.savefig('./pic/return_ratio'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'return_ratio'+aday+'.png', bbox_inches='tight')
     plt.close()
 
     vols = df['vol']
     plt.figure()
     vols.hist(bins=50)
     plt.title('成交量')
-    plt.savefig('./pic/vol'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'vol'+aday+'.png', bbox_inches='tight')
     plt.close()
 
     amounts = df['amount']
     plt.figure()
     amounts.hist(bins=100)
     plt.title('成交额')
-    plt.savefig('./pic/amount'+aday+'.png', bbox_inches='tight')
+    plt.savefig(PATH + 'amount'+aday+'.png', bbox_inches='tight')
     plt.close()
     
 if __name__ == '__main__':
     print('hello...')
     draw_pic('20201116')
-    days = ['19940728', '20050606', '20081028', '20130625', '20160127',
-            '19990519']
+    days = ['19940728', '20050606', '20081028', '20130625', '20160127', '19990519']
 
 #    for aday in days:
 #        draw_pic(aday)

@@ -1,5 +1,4 @@
 ## *-* encoding: utf-8 *-*
-
 import ts_utils
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -156,12 +155,13 @@ def model_svm(sh_index):
 
 if __name__ == '__main__':
     print('hi...')
-    sh_index = ts_utils.call_sh_index_v1()
+    sh_index = ts_utils.call_sh_index()
 
-    sh_index = sh_index.loc['2000-01-01':'2020-11-16']
+    sh_index = sh_index.loc['2000-01-01':'2020-11-18']
    
     print(sh_index.tail())
     
     print(len(sh_index))
 
     model_lstm(sh_index)
+    #model_svm(sh_index)
