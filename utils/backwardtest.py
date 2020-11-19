@@ -1,4 +1,5 @@
 import ts_utils
+import ts_pro
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -133,7 +134,7 @@ def test():
     stock_code = '000001.SZ'
     ipo_date = '20190101'
     aday = '20191001'
-    df = ts_utils.call_stock_qfq_raw(stock_code, ipo_date, aday)
+    df = ts_pro.call_stock_qfq_raw(stock_code, ipo_date, aday)
     df = df.sort_values(by='trade_date')
     df = df.reset_index(drop=True)
     r = Strategy(pdatas=df, win_long=89, win_short=21, lossratio=999)

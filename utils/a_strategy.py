@@ -52,6 +52,8 @@ def select_stocks(aday):
         print('MGAIC STOCKS:\n', today_focus)
         
     return today_focus
+def trick(aday):
+    select_stock(aday)
 
 def show_my_stock():
     aday = utils.yesterday()

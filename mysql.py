@@ -4,10 +4,9 @@ Created on 2020年1月30日
 @author: JM
 '''
 import pandas as pd
-import tushare as ts
-import TSUtils
-import DBUtils
-import Utils
+import utils.ts_pro as TSUtils
+import utils.DBUtils as DBUtils
+import utils.utils as Utils
 
 engine_ts = DBUtils.get_engine()
 

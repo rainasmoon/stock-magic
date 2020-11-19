@@ -74,9 +74,6 @@ def draw_pic(aday):
 
     p_ratio = df['pct_chg']
 
-    x = df['close'].quantile(0.05)
-    print('x:' + str(x))
-
     plt.figure()
     p_ratio.hist(bins=40)
     plt.title('回报率分布')
@@ -114,7 +111,6 @@ def draw_pic(aday):
 if __name__ == '__main__':
     print('hello...')
     draw_pic('20201116')
-    days = ['19940728', '20050606', '20081028', '20130625', '20160127', '19990519']
 
 #    for aday in days:
 #        draw_pic(aday)

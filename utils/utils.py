@@ -16,7 +16,7 @@ date_end = str(year) + '-11-01'
 
 stock_pool = ['601633.SH', '300077.SZ', '300024.SZ', '002024.SZ', '600030.SH']
 #stock_pool = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
-IMP_DAYS = []
+IMP_DAYS = ['19940728', '20050606', '20081028', '20130625', '20160127', '19990519']
 
 def to_date(afulldate):
     return datetime.datetime.strptime(afulldate, '%Y-%m-%d')

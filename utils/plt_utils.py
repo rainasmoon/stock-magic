@@ -38,7 +38,7 @@ def show_ma(df, stock_info):
     plt.show()
 
 
-def show_mon_k_v1(df, stock_info):
+def show_mon_k(df, stock_info):
     stock_month = df['close']
     stock_month.plot()
     plt.title('月线' + stock_info)

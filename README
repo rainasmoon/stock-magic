@@ -1,3 +1,7 @@
+create db
+
+run init db script: mysql -u stock -p stocks < all.sql
+
 need to run Init_StockAll_Sp.py to get the stock data;
 
 need to run mysql.py to get the index data.

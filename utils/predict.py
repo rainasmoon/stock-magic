@@ -1,5 +1,6 @@
 ## *-* encoding: utf-8 *-*
 import ts_utils
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -163,5 +164,5 @@ if __name__ == '__main__':
     
     print(len(sh_index))
 
-    model_lstm(sh_index)
-    #model_svm(sh_index)
+    #model_lstm(sh_index)
+    model_svm(sh_index)
