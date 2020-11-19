@@ -1,4 +1,4 @@
-import DBUtils
+import utils.DBUtils as DBUtils
 
 def cap_update_daily(state_dt):
     para_norisk = (1.0 + 0.04/365)

@@ -1,7 +1,7 @@
 # -*- coding:utf8 -*-
 import numpy as np
-import DBUtils
-import Utils
+import utils.DBUtils as DBUtils
+import utils.utils as Utils
 
 class data_collect(object):
 

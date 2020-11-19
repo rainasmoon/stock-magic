@@ -1,5 +1,5 @@
-import ts_utils
-import ts_pro
+import utils.ts_utils as ts_utils
+import utils.ts_pro as ts_pro
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

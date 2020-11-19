@@ -33,8 +33,8 @@ sharp率： （收益-无风险利率）/波动率
 最大回撤
 '''
 
-import utils
-import ts_pro
+import utils.utils as utils
+import utils.ts_pro as ts_pro
 
 DEBUG = False
 
@@ -53,7 +53,7 @@ def select_stocks(aday):
         
     return today_focus
 def trick(aday):
-    select_stock(aday)
+    select_stocks(aday)
 
 def show_my_stock():
     aday = utils.yesterday()

@@ -1,6 +1,6 @@
 ## encoding: utf-8
-import ts_utils
-import ts_pro
+import utils.ts_utils as ts_utils
+import utils.ts_pro as ts_pro
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,7 +14,7 @@ mpl.rcParams['font.sans-serif'] = ['SimHei']
 # 画图时显示负号
 mpl.rcParams['axes.unicode_minus'] = False
 
-PATH = '../datas/pic/'
+PATH = './datas/pic/'
 
 def draw_pic(aday):
     print('RUN on day:' + aday)

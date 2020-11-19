@@ -1,7 +1,7 @@
 import datetime
-import TSUtils
-import DBUtils
-import Utils
+import utils.ts_pro_api as TSUtils
+import utils.DBUtils as DBUtils
+import utils.utils as Utils
 
 if __name__ == '__main__':
 
@@ -25,6 +25,7 @@ if __name__ == '__main__':
             print('Seq: ' + str(i+1) + ' of ' + str(total) + '   Code: ' +
                   str(stock_pool[i]) + ' Size: ' + str(c_len))
         except Exception as aa:
+            print(aa)
             print('ERROR: No DATA Code: ' + str(i))
             continue
         for j in range(c_len):

@@ -1,9 +1,9 @@
 ## -*- encoding: utf-8 -*- ##
 import datetime
 import DC
-import DBUtils
-import Utils
-import ModelUtils
+import utils.DBUtils as DBUtils
+import utils.utils as Utils
+import utils.ModelUtils as ModelUtils
 
 import traceback
 

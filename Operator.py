@@ -1,6 +1,6 @@
 import Deal
-import DBUtils
-import Utils
+import utils.DBUtils as  DBUtils
+import utils.utils as Utils
 
 def buy(stock_code,opdate,buy_money):
     deal_buy = Deal.Deal(opdate)

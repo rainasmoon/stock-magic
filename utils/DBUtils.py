@@ -1,9 +1,10 @@
 ## encoding: utf-8 ##
 import pymysql
 import datetime
-import Utils
+import utils
 from sqlalchemy import create_engine 
 from pylab import np
+from . import utils as Utils
 
 def get_mysql_conn():
     return pymysql.connect(host='localhost', user='stock', passwd='stock',

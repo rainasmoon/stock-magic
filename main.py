@@ -2,9 +2,9 @@
 import Filter
 import Portfolio as pf
 import Cap_Update_daily as cap_update
-import DBUtils
-import Utils
-import PltUtils
+import utils.DBUtils as DBUtils
+import utils.utils as Utils
+import utils.plt_utils as PltUtils
 
 import datetime
 

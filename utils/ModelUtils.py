@@ -1,6 +1,6 @@
 from sklearn import svm
 import DC
-import Utils
+from . import utils as Utils
 
 def use_svm(train, target, test_case):
     model = svm.SVC(gamma = 'scale')# 建模

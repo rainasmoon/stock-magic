@@ -1,4 +1,4 @@
-import DBUtils
+import utils.DBUtils as DBUtils
 
 class Deal(object):
     cur_capital = 0.00

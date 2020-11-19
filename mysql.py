@@ -7,7 +7,8 @@ import pandas as pd
 import utils.ts_pro as TSUtils
 import utils.DBUtils as DBUtils
 import utils.utils as Utils
-
+import utils.ts_utils_api as ts_utils_api
+import utils.ts_pro_api as ts_pro_api
 engine_ts = DBUtils.get_engine()
 
 def read_data(table_name):
@@ -26,19 +27,19 @@ def get_data():
     if df.empty:
         pro = TSUtils.get_pro()
         print('CALL Tushare...')
-        df = pro.stock_basic()
+        df = ts_pro.stock_basic()
         write_data(df, 'stock_basic')
     return df
 
 def get_index():
     print('CALL old TS...')
-    df = ts.get_k_data(code='sh', ktype='D', autype='qfq', start='1990-12-20')
+    df = ts_utils_api.call_sh_index()
     write_data(df, 'stock_index')
     return df
 
 def get_calender(start, end):
     print('CALL pro ...')
-    df = TSUtils.get_pro().trade_cal(exchange_id='SSE', is_open=1, start_date=start, end_date=end)
+    df = ts_pro_api.call_calender(start, end)
     write_data(df, 'calender')
     return df
 

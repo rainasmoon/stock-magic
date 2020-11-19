@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
-import utils
-import plt_utils
-import ts_utils
-import ts_pro
+import utils.utils as utils
+import utils.plt_utils as plt_utils
+import utils.ts_utils as ts_utils
+import utils.ts_pro as ts_pro
 
 test_ts_code_1 = '000001.SZ'
 

@@ -1,8 +1,8 @@
 import numpy as np
 import datetime
 import copy
-import DBUtils
-import Utils
+import utils.DBUtils as DBUtils
+import utils.utils as Utils
 
 def count_sharp(a_list, b_list):
     sharp_temp = np.array(copy.copy(a_list)) * b_list
