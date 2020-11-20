@@ -1,6 +1,8 @@
 import datetime
 from pylab import np
 
+from . import ts_pro_api as ts_pro_api
+
 GOOD_THREADHOLD = 1.03
 BAD_THREADHOLD = 0.97
 OVER_DUE_DAYS = 4
@@ -83,6 +85,15 @@ def yesterday():
     yesterday = datetime.date.today() - datetime.timedelta(days=1)
     return yesterday.strftime("%Y%m%d")
 
+def new_trade_day():
+    now = datetime.datetime.now().time()
+    aday = today()
+    if now < datetime.time(15,0,0):
+        aday = yesterday()
+
+    return ts_pro_api.call_last_tradeday(aday)
+
 if __name__ == '__main__':
     print(today())
     print(yesterday())
+    print(new_trade_day())

@@ -1,6 +1,7 @@
 ## encoding: utf-8
 import utils.ts_utils as ts_utils
 import utils.ts_pro as ts_pro
+import utils.utils as utils
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -110,7 +111,7 @@ def draw_pic(aday):
     
 if __name__ == '__main__':
     print('hello...')
-    draw_pic('20201116')
+    draw_pic(utils.new_trade_day())
 
 #    for aday in days:
 #        draw_pic(aday)

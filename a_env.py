@@ -1,5 +1,4 @@
 #-*- coding: utf-8 -*-
-
 import utils.ts_utils as ts_utils
 import utils.ts_pro as ts_pro
 import utils.utils as utils
@@ -15,7 +14,7 @@ import utils.plt_utils as plt_utils
 
 '''
 
-def summury_env(aday):
+def summury_env():
     today_indexs = ts_utils.call_today_indexs()
     today_sh_index = today_indexs.loc['000001', 'close']
     today_sh_vol = today_indexs.loc['000001', 'volume']
@@ -55,5 +54,5 @@ def summury_env(aday):
     print('higher vol posibility: %0.2f'%(gr_vol_posibility))
 
 if __name__ == '__main__':
-    r = summury_env('20201118')
+    r = summury_env()
     print(r)

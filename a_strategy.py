@@ -64,5 +64,5 @@ def show_my_stock():
 
 if __name__ == '__main__':
     show_my_stock()
-    r = select_stocks('20200402')
+    r = select_stocks(utils.new_trade_day())
     print(r)
