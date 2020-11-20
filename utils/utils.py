@@ -1,7 +1,10 @@
 import datetime
 from pylab import np
 
-from . import ts_pro_api as ts_pro_api
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.conf')
 
 GOOD_THREADHOLD = 1.03
 BAD_THREADHOLD = 0.97
@@ -19,6 +22,9 @@ date_end = str(year) + '-11-01'
 stock_pool = ['601633.SH', '300077.SZ', '300024.SZ', '002024.SZ', '600030.SH']
 #stock_pool = ['603912.SH', '300666.SZ', '300618.SZ', '002049.SZ', '300672.SZ']
 IMP_DAYS = ['19940728', '20050606', '20081028', '20130625', '20160127', '19990519']
+
+def read_config(session, key):
+    return config[session][key]
 
 def to_date(afulldate):
     return datetime.datetime.strptime(afulldate, '%Y-%m-%d')
@@ -90,8 +96,7 @@ def new_trade_day():
     aday = today()
     if now < datetime.time(15,0,0):
         aday = yesterday()
-
-    return ts_pro_api.call_last_tradeday(aday)
+    return aday
 
 if __name__ == '__main__':
     print(today())

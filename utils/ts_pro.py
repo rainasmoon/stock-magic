@@ -5,7 +5,7 @@ import pandas as pd
 from . import ts_pro_api as pro
 from . import utils as utils
 
-COMMEN_FILE_PATH = '../datas/'
+COMMEN_FILE_PATH = utils.read_config('datas','path')
 
 test_ts_code_1 = '000001.SZ'
 test_ts_code_2 = '002018.SZ'
@@ -44,7 +44,7 @@ def call_all_stocks():
     is_hs     str     是否沪深港通标的，N否 H沪股通 S深股通
     '''
     
-    filePath = COMMEN_FILE_PATH + 'all_stocks.csv'
+    filePath = COMMEN_FILE_PATH + '/all_stocks.csv'
     if not os.path.exists(filePath):
         data = pro.call_all_stocks()
         if data.empty:
@@ -66,7 +66,7 @@ def call_stock_info(ts_code):
 
 
 def call_daily(aday):
-    path = COMMEN_FILE_PATH + 'daily/'
+    path = COMMEN_FILE_PATH + '/daily/'
     path = path + aday[:4] + '/' +  aday[4:6] + '/' + aday[6:8] + '/'
     if not os.path.exists(path):
         os.makedirs(path)
@@ -85,7 +85,7 @@ def call_daily(aday):
 
 
 def call_stock(ts_code, start_date, end_date):
-    filePath = COMMEN_FILE_PATH + f'stock_{ts_code}_{start_date}_{end_date}.csv'
+    filePath = COMMEN_FILE_PATH + f'/stock_{ts_code}_{start_date}_{end_date}.csv'
     if not os.path.exists(filePath):
         
         df = pro.call_stock(ts_code, start_date, end_date)
@@ -99,7 +99,7 @@ def call_stock(ts_code, start_date, end_date):
     return make(df)
 
 def call_stock_qfq_raw(ts_code, start_date, end_date):
-    path = COMMEN_FILE_PATH + 'stocks/' + ts_code[:3] + '/' + ts_code + '/'
+    path = COMMEN_FILE_PATH + '/stocks/' + ts_code[:3] + '/' + ts_code + '/'
     yesterday = utils.yesterday()
     oldFile = None
     filePath = None

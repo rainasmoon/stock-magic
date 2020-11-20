@@ -5,7 +5,7 @@ import pandas as pd
 from . import ts_utils_api as ts
 from . import utils as utils
 
-COMMEN_FILE_PATH = '../datas/v1/'
+COMMEN_FILE_PATH = utils.read_config('datas', 'path') + '/v1'
 
 test_ts_code_1 = '000001.SZ'
 test_ts_code_2 = '002018.SZ'

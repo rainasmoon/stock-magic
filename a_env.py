@@ -27,7 +27,7 @@ def summury_env():
     sh_index_history = sh_index_history.loc[utils.day0:]
     print('BASE day0: ' + utils.day0)
 
-    plt_utils.show_k(sh_index_history, '上证指数')
+#    plt_utils.show_k(sh_index_history, '上证指数')
 
     describe = sh_index_history.describe()
 

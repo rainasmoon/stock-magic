@@ -1,5 +1,5 @@
 ## *-* encoding: utf-8 *-*
-import ts_utils
+import utils.ts_utils as ts_utils
 
 import matplotlib.pyplot as plt
 import pandas as pd

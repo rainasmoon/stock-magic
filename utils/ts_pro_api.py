@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 import tushare as ts
-import configparser
+from . import utils
 
-config = configparser.ConfigParser()
-config.read('config.conf')
-app_key = config['tushare']['app_key']
-
-ts.set_token(app_key)
+ts.set_token(utils.read_config('tushare', 'app_key'))
 pro = ts.pro_api()
 
 test_ts_code_1 = '000001.SZ'
@@ -15,6 +11,10 @@ test_ts_code_2 = '002018.SZ'
 DEBUG = True
 
 def call_last_tradeday(aday):
+
+    if aday == '':
+        aday = utils.new_trade_day()
+
     df = pro.trade_cal(exchange='SSE', start_date=aday,
                        end_date=aday, fields='cal_date, is_open, pretrade_date')
 
