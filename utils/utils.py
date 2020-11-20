@@ -10,7 +10,7 @@ OVER_DUE_DAYS = 4
 DAY_WAVE = 0.0
 MINUS = 0
 
-day0 = '20100101'
+day0 = '20000101'
 
 year = 2020
 date_start = str(year) + '-10-01'

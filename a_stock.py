@@ -4,6 +4,8 @@ import utils.plt_utils as plt_utils
 import utils.ts_utils as ts_utils
 import utils.ts_pro as ts_pro
 
+import pandas as pd
+
 test_ts_code_1 = '000001.SZ'
 
 
@@ -58,13 +60,23 @@ def a_stock(stock_code, aday):
     gr_vol_days = len(df[df['vol'] > vol])
     gr_vol_posibility = gr_vol_days/ len(df)
 
-    return astock, price_pos, vol_pos, gr_price_posibility, gr_vol_posibility
+    astock = astock[['name', 'industry', 'market']]
+
+    astock['price_pos'] = price_pos
+    astock['vol_pos'] = vol_pos
+    astock['gr_price_posibility'] = gr_price_posibility
+    astock['gr_vol_posibility'] = gr_vol_posibility
+
+    return astock
 
 if __name__ == '__main__':
     
     stock_1 = '002024.SZ'
     stock_2 = '300024.SZ'
-    print(a_stock(stock_1, utils.yesterday()))
-    print(a_stock(stock_2, utils.yesterday()))
-
-    show_a_stock(stock_1, utils.yesterday())
+    stock_3 = '300077.SZ'
+    df = pd.DataFrame()
+    df = df.append(a_stock(stock_1, utils.yesterday()).T)
+    df = df.append(a_stock(stock_2, utils.yesterday()).T)
+    df = df.append(a_stock(stock_3, utils.yesterday()).T)
+    print(df)
+    #show_a_stock(stock_1, utils.yesterday())
