@@ -1,2 +1,5 @@
 [tushare]
 app_key=*******************************
+
+[datas]
+path=/var/datas
