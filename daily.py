@@ -1,7 +1,7 @@
 ## encoding: utf-8
 import utils.ts_utils as ts_utils
 import utils.ts_pro as ts_pro
-import utils.utils as utils
+import utils.common_utils as utils
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -17,9 +17,32 @@ mpl.rcParams['axes.unicode_minus'] = False
 
 PATH = utils.read_config('datas', 'path') +'/pic'
 
+def say_today(aday):
+    df = ts_pro.call_daily(aday)
+
+    price_50 = df[df['close'] > 50]
+    print('the number over 50 is:' + str(len(price_50)))
+
+    price_100 = df[df['close'] > 100]
+    print('the number over 100 is:' + str(len(price_100)))
+
+    price_exception = df[df['close'] > 400]
+    print('the number over 400 is:' + str(len(price_exception)))
+
+    p_up = df[df['pct_chg'] > 9]
+
+    print('up is:' + str(len(p_up)))
+
+    p_down = df[df['pct_chg'] < -9 ]
+    print('down is:' + str(len(p_down)))
+
 def draw_pic(aday):
     print('RUN on day:' + aday)
     df = ts_pro.call_daily(aday)
+
+    if df.empty:
+        print('WARNING: data is prepared...')
+        return
 
     prices = df['close']
     prices = prices.sort_values(ascending = True)
@@ -57,21 +80,6 @@ def draw_pic(aday):
     plt.savefig(PATH + '/class2_stocks'+aday+'.png', bbox_inches='tight')
     plt.close()
 
-    price_50 = df[df['close'] > 50]
-    print('the number over 50 is:' + str(len(price_50)))
-
-    price_100 = df[df['close'] > 100]
-    print('the number over 100 is:' + str(len(price_100)))
-
-    price_exception = df[df['close'] > 400]
-    print('the number over 400 is:' + str(len(price_exception)))
-
-    p_up = df[df['pct_chg'] > 9]
-
-    print('up is:' + str(len(p_up)))
-
-    p_down = df[df['pct_chg'] < -9 ]
-    print('down is:' + str(len(p_down)))
 
     p_ratio = df['pct_chg']
 
@@ -111,7 +119,7 @@ def draw_pic(aday):
     
 if __name__ == '__main__':
     print('hello...')
-    draw_pic(utils.new_trade_day())
-
-#    for aday in days:
-#        draw_pic(aday)
+    days = utils.IMP_DAYS
+    for aday in days:
+        print(aday)
+        say_today(aday)

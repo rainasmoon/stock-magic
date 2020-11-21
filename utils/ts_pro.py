@@ -3,7 +3,7 @@ import os
 
 import pandas as pd
 from . import ts_pro_api as pro
-from . import utils as utils
+from . import common_utils as utils
 
 COMMEN_FILE_PATH = utils.read_config('datas','path')
 
@@ -142,6 +142,3 @@ def call_stock_qfq(ts_code, start_date, end_date):
     df = df.sort_index()
     return df.loc[start_date:end_date]
 
-if __name__ == '__main__':
-    r = call_all_stocks()
-    print(r)

@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 import utils.ts_utils as ts_utils
 import utils.ts_pro as ts_pro
-import utils.utils as utils
+import utils.common_utils as utils
 import utils.plt_utils as plt_utils
 
 '''

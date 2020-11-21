@@ -3,7 +3,7 @@ import os
 
 import pandas as pd
 from . import ts_utils_api as ts
-from . import utils as utils
+from . import common_utils as utils
 
 COMMEN_FILE_PATH = utils.read_config('datas', 'path') + '/v1'
 
@@ -47,7 +47,3 @@ def call_sh_index():
     return df
 
 
-if __name__ == '__main__':
-
-    r = call_sh_index()
-    print(r)

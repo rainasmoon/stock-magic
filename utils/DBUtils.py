@@ -4,7 +4,7 @@ import datetime
 import utils
 from sqlalchemy import create_engine 
 from pylab import np
-from . import utils as Utils
+from . import common_utils as Utils
 
 def get_mysql_conn():
     return pymysql.connect(host='localhost', user='stock', passwd='stock',
@@ -421,6 +421,3 @@ def get_stock_calender(startdate, enddate):
     
     return [x[0] for x in cal_seq]
 
-if __name__ == '__main__':
-    seq = get_stock_calender('2000-01-01', '2000-01-10')
-    print(seq)

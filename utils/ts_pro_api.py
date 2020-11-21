@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import tushare as ts
-from . import utils
+from . import common_utils as utils
 
 ts.set_token(utils.read_config('tushare', 'app_key'))
 pro = ts.pro_api()
@@ -82,6 +82,3 @@ def get_daily(stock_code, start_dt, end_dt):
 
     return df
 
-if __name__ == '__main__':
-    r = call_last_tradeday('20150607')
-    print(r)

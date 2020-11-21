@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import tushare as ts
 
 test_ts_code_1 = '000001.SZ'
@@ -87,7 +86,3 @@ def call_sh_index():
     return df
 
 
-if __name__ == '__main__':
-
-    r = call_sh_index()
-    print(r)
